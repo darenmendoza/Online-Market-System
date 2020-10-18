@@ -24,6 +24,9 @@ NEXT STEP
 cd firebase-app
 npm install axios firebase --save
 npm install --save nuxt
+
+NEXT STEP after cloning
+copy all files from repo folder then paste and replace to your firebase-app folder
 ```
 
 ### Compiles and hot-reloads for development
