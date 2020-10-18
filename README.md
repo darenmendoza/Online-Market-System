@@ -12,13 +12,13 @@ manual select features:
 -Vuex
 -CSS Pre-processors
 -Linter/Formatter
+Choose a version of Vue.js: 2x
 -Use History: Yes
 -Pick a CSS pre-processor: Sass/SCSS (with node-sass)
 -Pick a linter: ESlint with error prevention only
 -lint on save
 -in dedicated config files
 -Save for future projects: No
--2x
 
 NEXT STEP
 cd firebase-app
