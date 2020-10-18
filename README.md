@@ -2,7 +2,7 @@
 
 ## Project setup
 ```
-DO THE FOLLOWING BEFORE PULLING THE PROJECT
+DO THE FOLLOWING BEFORE CLONING & PULLING THE PROJECT
 
 npm install -g @vue/cli
 vue create firebase-app
