@@ -1,6 +1,6 @@
 ## CREATE NUXT
 
-npx create-nuxt-app firebase
+npx create-nuxt-app firebase-app
 
 Project Name: firebase-app
 
