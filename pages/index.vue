@@ -43,12 +43,14 @@
     </div>
   </article>
 </template>
+
 <script>
 import * as firebase from "firebase/app";
 import "firebase/auth";
 
-  export default {
-    methods: {
+export default {
+  
+  methods: {
       signup(){
         firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function(error){
           console.log(this.password);
@@ -91,7 +93,7 @@ import "firebase/auth";
           });
       }
     },
-    data: () => {
+  data: () => {
       return {
         email: "",
         password: '',
@@ -99,10 +101,11 @@ import "firebase/auth";
         signUp: false
       }
     }
-  }
+
+}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     
     .article {
         display: flex;
