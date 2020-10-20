@@ -1,48 +1,28 @@
-# firebase-app
+npx create-nuxt-app firebase
+Project Name: firebase-app
+Programming language: Javascript
+Package manager : Pwede Yarn Pwede Npm
+UI framework: Bootstrap Vue
+Nuxt.js Modules : Axios
+Lining: Prettier
+Test Framework: None
+Rendering Mode: Universal SSR
+Deployment target : Server (node.js hosting)
+Development tools : jsconfig.json
+Continous Integration: Github Actions
+Git User: "kung userniyo"
+Version control system : Git
 
-## Project setup
-```
-DO THE FOLLOWING BEFORE CLONING & PULLING THE PROJECT
-
-npm install -g @vue/cli
-vue create firebase-app
-manual select features:
--Babel
--Router
--Vuex
--CSS Pre-processors
--Linter/Formatter
-Choose a version of Vue.js: 2x
--Use History: Yes
--Pick a CSS pre-processor: Sass/SCSS (with node-sass)
--Pick a linter: ESlint with error prevention only
--lint on save
--in dedicated config files
--Save for future projects: No
-
-NEXT STEP
 cd firebase-app
-npm install axios firebase --save
-npm install --save nuxt
+npm install firebase --save
+yarn add firebase (pag yarn gamit niyo)
 
-NEXT STEP after cloning
+Sass Loader
+npm install --save-dev node-sass sass-loader
+
 copy all files from repo folder then paste and replace to your firebase-app folder
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+npm run dev
+localhost:3000
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
