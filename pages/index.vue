@@ -52,7 +52,19 @@ export default {
   
   methods: {
       signup(){
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function(error){
+        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(function(result){
+
+          alert("Thank you for signing up");
+          
+          firebase.auth().currentUser.sendEmailVerification().then(function(result){
+                alert("Verification Email Sent");    
+
+                 }).catch(error => {
+                    this.error = error;
+                 })
+        }).catch(function(error){
+
+          alert("Email Already Registered");
           console.log(this.password);
           var errorCode = error.code;
           var errorMessage = error.message;
@@ -63,6 +75,7 @@ export default {
             alert(errorMessage);
           }
           console.log(error);
+          
         })
       },
       login(){
