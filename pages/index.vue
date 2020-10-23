@@ -1,5 +1,6 @@
 <template>
   <article>
+    {{state()}}
     <div class="container" :class="{'sign-up-active' : signUp}">
       <div class="overlay-container">
         <div class="overlay">
@@ -26,6 +27,7 @@
         <div class="password">
           <input type="password" v-model="password" placeholder="Password" required/>
         </div>
+        <br>
         <button type="submit" class="button">Sign Up</button>
       </form>
       <form @submit.prevent="login" class="sign-in">
@@ -37,9 +39,11 @@
         <div class="password">
           <input v-model="password" type="password" placeholder="Password" required/>
         </div>
-          <input type="checkbox" id="remember">
-          <label for="remember">Remember me!</label>
-          <a @click="showModal = true" >Forgot your password?</a>
+        <div class="checkbox">
+          <input type="checkbox" class="form-check-input" id="remember">
+          <label class="form-check-label" for="remember">Remember Me</label>
+        </div>
+        <a @click="showModal = true">Forgot your password?</a>
         <button type="submit" class="button">Sign In</button>
       </form>
     </div>
@@ -71,18 +75,18 @@
 import * as firebase from "firebase/app";
 import "firebase/auth";
 
-firebase.auth().onAuthStateChanged(user =>{
-      if(user){
-        console.log(user);
-        window.location.href = '/account';
-          }
-      })
-
-
-
 export default {
   
   methods: {
+      
+      state(){
+      firebase.auth().onAuthStateChanged(user =>{
+      if(user){
+        console.log(user);
+        this.$router.push('/account')
+          }
+      })
+      },
       
       signup(){
         firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(function(result){
@@ -124,9 +128,10 @@ export default {
             {
               firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
             }
+
+            this.$router.push("/account")
           })
           .catch(function(error) {
-            alert("Unidentified Log In credentials");
             // Handle Errors here.
             var errorCode = error.code;
             // [START_EXCLUDE]
@@ -182,15 +187,15 @@ export default {
         justify-content: center;
     }
     .container {
+
         position: absolute;
-        top: 20%;
+        top: 10%;
         left: 25%;
         width: 768px;
         height: 480px;
         overflow: hidden;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, .2),
-                    0 10px 10px rgba(0, 0, 0, .2);
-        background: linear-gradient(to bottom, #efefef, #ccc);
+        box-shadow: 0 10px 10px rgba(0, 0, 0, .2);
+        background: #52796F;
         
         .overlay-container {
         position: absolute;
@@ -207,7 +212,7 @@ export default {
         left: -100%;
         height: 100%;
         width: 200%;
-        background: linear-gradient(to bottom right, #7FD625, #009345);
+        background: #84A98C;
         color: #fff;
         transform: translateX(0);
         transition: transform .5s ease-in-out;
@@ -250,7 +255,7 @@ export default {
     button {
         border-radius: 20px;
         border: 1px solid #009345;
-        background-color: #009345;
+        background-color: #2F3E46;
         color: #fff;
         font-size: 1rem;
         font-weight: bold;
@@ -277,21 +282,22 @@ export default {
         align-items: center;
         justify-content: space-around;
         flex-direction: column;
-        padding: 120px 85px;
-        width: calc(50% -120px);
+        padding: 95px 83px;
+        width: calc(50% -90px);
         height: calc(100% -180px);
+        
         text-align: center;
-        background: linear-gradient(to bottom, #efefef, #ccc);
+        background: #cad2c5;
         transition: all .5s ease-in-out;
         div {
         font-size: 1rem;
         }
+    
         input {
         background-color: #eee;
         border: none;
-        padding: 8px 15px;
+        padding: 8px 20px;
         margin: 6px 0;
-        width: calc(100% - 30px);
         border-radius: 15px;
         border-bottom: 1px solid #ddd;
         box-shadow: inset 0 1px 2px rgba(0, 0, 0, .4), 
@@ -303,7 +309,9 @@ export default {
             background-color: #fff;
         }
         }
+        
     }
+   
     .sign-in {
         left: 0;
         z-index: 2;
@@ -350,7 +358,8 @@ export default {
         z-index: 10;
         }
     }
-  // TEMPORARY MODAL ANIMATION WILL CHANGE NEXT SPRINT
+
+      // TEMPORARY MODAL ANIMATION WILL CHANGE NEXT SPRINT
     .modal-overlay {
       position: absolute;
       top: 0;
