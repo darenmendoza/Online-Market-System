@@ -37,9 +37,9 @@
         <div class="password">
           <input v-model="password" type="password" placeholder="Password" required/>
         </div>
-          <input type="checkbox" id="remember" v-on:change="persist">
+          <input type="checkbox" id="remember">
           <label for="remember">Remember me!</label>
-          <a @click="showModal = true">Forgot your password?</a>
+          <a @click="showModal = true" >Forgot your password?</a>
         <button type="submit" class="button">Sign In</button>
       </form>
     </div>
@@ -245,6 +245,7 @@ export default {
         text-decoration: none;
         margin: 15px 0;
         font-size: 1rem;
+        cursor:pointer;
     }
     button {
         border-radius: 20px;
