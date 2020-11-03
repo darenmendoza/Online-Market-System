@@ -89,21 +89,19 @@ export default {
       },
       
       signup(){
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(function(result){
+        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
 
           alert("Thank you for signing up");
           console.log(user);
-          firebase.auth().currentUser.sendEmailVerification().then(function(result){
+          firebase.auth().currentUser.sendEmailVerification().then(user =>{
                 alert("Verification Email Sent");    
 
                  }).catch(error => {
+                   console.log(error);
                     this.error = error;
                  })
-          window.location.reload(true)  
         }).catch(function(error){
 
-          alert("Email Already Registered");
-          console.log(this.password);
           var errorCode = error.code;
           var errorMessage = error.message;
 
@@ -113,7 +111,6 @@ export default {
             alert(errorMessage);
           }
           console.log(error);
-          window.location.reload(true)
         })
       },
       login(){
@@ -129,7 +126,6 @@ export default {
               firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
             }
 
-            this.$router.push("/account")
           })
           .catch(function(error) {
             // Handle Errors here.
