@@ -37,7 +37,6 @@ npm install firebase --save
 yarn add firebase (pag yarn gamit niyo)
 
 ### Install Sass Loader
-Sass Loader
 npm install --save-dev node-sass sass-loader
 
 ## Replace files
