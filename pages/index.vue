@@ -1,5 +1,6 @@
 <template>
   <article>
+    {{state()}}
     <div class="container" :class="{'sign-up-active' : signUp}">
       <div class="overlay-container">
         <div class="overlay">
@@ -50,35 +51,65 @@
           <input v-model="checked" type="checkbox" class="form-check-input" id="remembermebox">
           <label class="form-check-label" for="remembermebox">Remember Me</label>
         </div>
-        <a href="#">Forgot your password?</a>
+        <a @click="showModal = true">Forgot your password?</a>
         <button type="submit" class="button">Sign In</button>
       </form>
     </div>
+    <transition name="fade" appear>
+        <div class="modal-overlay" v-if="showModal" @click="showModal = false">
+         
+        </div>
+      </transition>
+      <transition name = "form" appear>
+          <div class="modal-form" v-if="showModal">
+            <div class="vue-tempalte">
+
+              <form @submit.prevent="reset">
+                 <h3>Forgot Password</h3>
+                  <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" v-model="ResetEmail" required/>
+                  </div>
+                  <button type="submit">Reset password</button>
+              </form>
+
+            </div>
+          </div>
+      </transition>
   </article>
 </template>
 
 <script>
-import * as firebase from "firebase/app";
+import firebase from "firebase/app";
 import "firebase/auth";
 
 export default {
   
   methods: {
+      
+      state(){
+      firebase.auth().onAuthStateChanged(user =>{
+      if(user){
+        console.log(user);
+        this.$router.push('/account')
+          }
+      })
+      },
+      
       signup(){
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(function(result){
+        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(user => {
 
           alert("Thank you for signing up");
-          
-          firebase.auth().currentUser.sendEmailVerification().then(function(result){
+          console.log(user);
+          firebase.auth().currentUser.sendEmailVerification().then(user =>{
                 alert("Verification Email Sent");    
 
                  }).catch(error => {
+                   console.log(error);
                     this.error = error;
                  })
         }).catch(function(error){
 
-          alert("Email Already Registered");
-          console.log(this.password);
           var errorCode = error.code;
           var errorMessage = error.message;
 
@@ -88,14 +119,21 @@ export default {
             alert(errorMessage);
           }
           console.log(error);
-          
         })
       },
       login(){
           firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-          .then(function(result){
-              console.log(result.user.email);
-              window.alert("Login Successful");
+          .then(user =>{
+            console.log(user);
+            if(document.getElementById("remembermebox").checked == true)
+            {
+              firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); 
+            }
+            else
+            {
+              firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+            }
+
           })
           .catch(function(error) {
             // Handle Errors here.
@@ -114,20 +152,35 @@ export default {
               alert('User Not Found');
             }
             console.log(error);
-            document.getElementById('login').disabled = false;
+           // document.getElementById('login').disabled = false;
             // [END_EXCLUDE]
           });
-      }
+      },
+      reset(){
+          firebase.auth().sendPasswordResetEmail(this.ResetEmail).then(function(result)
+          {
+              alert("Password Reset Email Sent!");
+              window.location.reload(true)
+          }).catch(function(error){
+              alert("Error occured! please try again next time");
+              console.log(error);
+             window.location.reload(true)
+              
+          });
+      },
+      
     },
   data: () => {
       return {
         email: "",
         password: '',
         error: '',
-        signUp: false
+        signUp: false,
+        ResetEmail:'',
+        showModal: false,
+        checked:false
       }
     }
-
 }
 </script>
 
@@ -369,6 +422,36 @@ export default {
 
     .slider.round:before {
       border-radius: 50%;
+    }
+
+     // TEMPORARY MODAL ANIMATION WILL CHANGE NEXT SPRINT
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom:0;
+      z-index: 101;
+      background-color:rgba(0, 0, 0, 0.3);
+    }
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 1.5s;
+    }
+
+    .fade-enter,
+    .fade-leave-to{
+      opacity:0;
+    }
+
+    .modal-form{
+      position: fixed;
+      top: 19%;
+      left: 40%;
+      transform: translate(-19%,-40%);
+      z-index: 102;
+
+      
     }
 
     
