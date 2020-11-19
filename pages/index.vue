@@ -165,7 +165,7 @@ export default {
           ) {
             this.$router.push("/admin");
           } else if (document.getElementById("slider").checked == false) {
-            this.$router.push("/account");
+            this.$router.push("/homepage");
           } else {
             window.alert("You are not an Admin");
             document.getElementById("slider").checked = false;
@@ -232,8 +232,7 @@ export default {
   }
 };
 </script>
-
-<style lang="scss">
+<style lang="scss" scoped>
 .article {
   display: flex;
   justify-content: center;
