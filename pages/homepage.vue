@@ -35,6 +35,7 @@
                   <div v-for="products in items" :key="products">
                       <item v-bind:books="products" />
                   </div>
+                  
                 </b-card-group>
                 <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
@@ -42,6 +43,7 @@
                       <item v-bind:books="products" />
                   </div>
                 </b-card-group>
+
                 
                 <h2>Recently Added</h2>
                 <b-card-group deck class="container">
@@ -138,6 +140,15 @@ export default {
           console.log(error);
         });
     }
+
+    },
+
+    data(){
+      return {
+        value:"",
+
+        items:[]
+      }
 
     },
 
