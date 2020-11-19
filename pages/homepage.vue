@@ -30,26 +30,60 @@
           <div class="y-auto">
             <div class="container">
               <b-card-group column>
+                <div>
                 <h2>Best Selling Ebook</h2>
-                <b-card-group deck class="container ">
-                  <div v-for="products in items" :key="products">
-                      <item v-bind:books="products" />
-                  </div>
+                <b-card-group deck class="container">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.best">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
                 </b-card-group>
+                </div>
+                <div>
                 <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
-                  <div v-for="products in items" :key="products">
-                      <item v-bind:books="products" />
-                  </div>
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.popular">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
                 </b-card-group>
-                
+                </div>
+                <div>
                 <h2>Recently Added</h2>
                 <b-card-group deck class="container">
-                  <div v-for="products in items" :key="products">
-                      <item v-bind:books="products" />
-                  </div>
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.recent">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
                 </b-card-group>
-                
+                </div>
                   <div>
                       <b-sidebar id="sidebar-right" title="Book Title" right shadow>
                         <div class="px-2 py-3">
@@ -100,7 +134,6 @@
 
 
 <script>
-import item from './item'
 import firebase from 'firebase/app'
 import "firebase/firestore"
 
@@ -108,7 +141,6 @@ import "firebase/firestore"
 export default {
 
   components: {
-    item
   },
 
   mounted(){
@@ -147,6 +179,7 @@ export default {
 
         items:[]
       }
-    }
+    },
+    
 }
 </script>
