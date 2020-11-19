@@ -1,6 +1,6 @@
-
 <template>
   <article>
+    <client-only>
       <b-navbar toggleable="lg">
       <b-navbar-brand  tag="b" href="homepage" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
         <!-- Right aligned nav items -->
@@ -19,7 +19,7 @@
             </b-avatar></em>
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+            <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
     </b-navbar>
@@ -30,19 +30,32 @@
           <div class="y-auto">
             <div class="container">
               <b-card-group column>
-                <div>
+                
                 <h2>Best Selling Ebook</h2>
+                <b-card-group deck class="container ">
+                  <div v-for="products in items" :key="products">
+                      <item v-bind:books="products" />
+                  </div>
+                </b-card-group>
+                
+               
+                <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                  <div v-for="products in items" :key="products">
+                      <item v-bind:books="products" />
+                  </div>
+                </b-card-group>
+                
+               
+                <h2>Recently Added</h2>
+                <b-card-group deck class="container">
+                  <div v-for="products in items" :key="products">
+                      <item v-bind:books="products" />
+                  </div>
+                </b-card-group>
+                
+
+                <div>
                       <b-sidebar id="sidebar-right" title="Book Title" right shadow>
                         <div class="px-2 py-3">
                           <b-img src="@/assets/empty-out-the-negative-1.jpg" fluid thumbnail></b-img>
@@ -62,258 +75,6 @@
                         </div>
                       </b-sidebar>
                     </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-                </b-card-group>
-                </div>
-                <div>
-                <h2>Popular Ebooks</h2>
-                <b-card-group deck class="container">
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-                </b-card-group>
-                </div>
-                <div>
-                <h2>Recently Added</h2>
-                <b-card-group deck class="container">
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-
-                  <b-card title="Book 1" img-src="@/assets/empty-out-the-negative-1.jpg" img-alt="Image" img-top>
-                    <b-card-text>
-                      -Author <br> 
-                      <div>
-                        <b-form-rating v-model="value" readonly show-value precision="2" variant="warning"></b-form-rating>
-                      </div> 
-                      <p>PHP 0.00</p>
-                    </b-card-text>
-                    <div>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
-                      
-                    </div>
-                    <template #footer>
-                      <small class="text-muted"> (0) downloaded</small>
-                    </template>
-                  </b-card>
-                </b-card-group>
-                </div>
                
 
               </b-card-group>
@@ -338,16 +99,58 @@
         </b-col>
       </b-row>
     </b-container>
+    </client-only>
   </article>
 </template>
 
 
 <script>
+import item from './item'
+import firebase from 'firebase/app'
+import "firebase/firestore"
+
 
 export default {
+
+  components: {
+    item
+  },
+
+  mounted(){
+    
+    firebase.firestore().collection('items').get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                this.items = [...this.items, docs.data()]
+            })
+        })
+    
+       
+  },
+
   methods: {
       linkGen(pageNum) {
         return pageNum === 1 ? '?' : `?page=${pageNum}`
+      },
+       signout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(user => {
+          console.log(user);
+          this.$router.push("/");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+
+    },
+
+    data(){
+      return {
+        value:"",
+
+        items:[]
       }
     }
 }
