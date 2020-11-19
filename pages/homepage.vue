@@ -30,15 +30,12 @@
           <div class="y-auto">
             <div class="container">
               <b-card-group column>
-                
                 <h2>Best Selling Ebook</h2>
                 <b-card-group deck class="container ">
                   <div v-for="products in items" :key="products">
                       <item v-bind:books="products" />
                   </div>
                 </b-card-group>
-                
-               
                 <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
                   <div v-for="products in items" :key="products">
@@ -46,7 +43,6 @@
                   </div>
                 </b-card-group>
                 
-               
                 <h2>Recently Added</h2>
                 <b-card-group deck class="container">
                   <div v-for="products in items" :key="products">
@@ -54,8 +50,7 @@
                   </div>
                 </b-card-group>
                 
-
-                <div>
+                  <div>
                       <b-sidebar id="sidebar-right" title="Book Title" right shadow>
                         <div class="px-2 py-3">
                           <b-img src="@/assets/empty-out-the-negative-1.jpg" fluid thumbnail></b-img>

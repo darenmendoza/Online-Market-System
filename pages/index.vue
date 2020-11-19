@@ -76,7 +76,7 @@
             id="remembermebox"
           />
           <label class="form-check-label" for="remembermebox"
-            >    Remember Me</label
+            >Remember Me</label
           >
         </div>
         <a @click="showModal = true">Forgot your password?</a>
