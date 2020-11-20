@@ -184,19 +184,22 @@ export default {
       let temp = '';
       let arrayTemp = [];
       console.log(`You've searched for: ${val}`);
+      val = val.toLowerCase();
       for(let i = 0; i < arr.length; i++){
         temp = arr[i].Title;
         arrayTitle.push(temp);
         arrayTemp.push(temp);
       }
-      console.log(arrayTitle);
-      console.log('Results:');
+      console.log('Result:');
       arrayTemp = arrayTemp.map(arrayTemp => arrayTemp.toLowerCase());
       for(let i = 0; i < arrayTemp.length; i++){
         if(arrayTemp[i].includes(val)){
           result = arrayTitle[i];
           console.log(result);
         }
+      }
+      if(result == ''){
+        console.log('No Result Found');
       }
     }
     },
