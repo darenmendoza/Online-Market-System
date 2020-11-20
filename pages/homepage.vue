@@ -8,8 +8,9 @@
           <b-nav-form>
             <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
             <b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
-            <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-            <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+            <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
+            <!-- <input type="text" class="form-control" v-model="findText" /> -->
+            <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
           </b-nav-form>
 
           <b-nav-item-dropdown right>
@@ -30,28 +31,60 @@
           <div class="y-auto">
             <div class="container">
               <b-card-group column>
+                <div>
                 <h2>Best Selling Ebook</h2>
-                <b-card-group deck class="container ">
-                  <div v-for="products in items" :key="products">
-                      <item v-bind:books="products" />
-                  </div>
-                  
+                <b-card-group deck class="container">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.best">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
                 </b-card-group>
+                </div>
+                <div>
                 <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
-                  <div v-for="products in items" :key="products">
-                      <item v-bind:books="products" />
-                  </div>
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.popular">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
                 </b-card-group>
-
-                
+                </div>
+                <div>
                 <h2>Recently Added</h2>
                 <b-card-group deck class="container">
-                  <div v-for="products in items" :key="products">
-                      <item v-bind:books="products" />
-                  </div>
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.recent">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
                 </b-card-group>
-                
+                </div>
                   <div>
                       <b-sidebar id="sidebar-right" title="Book Title" right shadow>
                         <div class="px-2 py-3">
@@ -102,7 +135,6 @@
 
 
 <script>
-import item from './item'
 import firebase from 'firebase/app'
 import "firebase/firestore"
 
@@ -110,7 +142,6 @@ import "firebase/firestore"
 export default {
 
   components: {
-    item
   },
 
   mounted(){
@@ -139,25 +170,44 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-    }
+    },
 
+    data: {
+      findText: ''
+    },
+
+    displaySearch: function() {
+      let val = this.findText;
+      let arr = this.items;
+      let arrayTitle = [];
+      let result = [];
+      let temp = '';
+      let arrayTemp = [];
+      console.log(`You've searched for: ${val}`);
+      for(let i = 0; i < arr.length; i++){
+        temp = arr[i].Title;
+        arrayTitle.push(temp);
+        arrayTemp.push(temp);
+      }
+      console.log(arrayTitle);
+      console.log('Results:');
+      arrayTemp = arrayTemp.map(arrayTemp => arrayTemp.toLowerCase());
+      for(let i = 0; i < arrayTemp.length; i++){
+        if(arrayTemp[i].includes(val)){
+          result = arrayTitle[i];
+          console.log(result);
+        }
+      }
+    }
     },
 
     data(){
       return {
         value:"",
 
-        items:[]
+        items:[],
       }
-
     },
-
-    data(){
-      return {
-        value:"",
-
-        items:[]
-      }
-    }
+    
 }
 </script>
