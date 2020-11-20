@@ -32,6 +32,7 @@
               <b-card-group column>
                 <div>
                 <h2>Best Selling Ebook</h2>
+
                 <b-card-group deck class="container">
                     <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.best">
                       <b-card-text>
@@ -65,6 +66,7 @@
                       </template> 
                     </b-card>
                 </b-card-group>
+
                 </div>
                 <div>
                 <h2>Recently Added</h2>
@@ -180,6 +182,5 @@ export default {
         items:[]
       }
     },
-    
 }
 </script>
