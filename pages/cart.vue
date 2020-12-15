@@ -1,4 +1,4 @@
-<template>
+  <template>
   <article>
     <client-only>
       <b-navbar toggleable="lg">
