@@ -29,12 +29,11 @@
       <b-row>
         <b-col md="3">
           <b-img thumbnail fluid src="https://picsum.photos/250/250/?image=59" alt="Image 3" rounded="circle"></b-img>
-          <b-button class=""><b-icon icon="upload" aria-hidden="true"></b-icon> Upload </b-button> 
+          <b-button class=""><b-icon icon="upload" aria-hidden="true"></b-icon></b-button> 
         </b-col>
         <b-col md="6">
-
-          <h1>Surname, First Name</h1>
-          <b-button v-b-toggle.collapse-name><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>
+          <div><h1>Surname, First Name <b-button v-b-toggle.collapse-name><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h1>
+          </div>
             <b-collapse id="collapse-name" class="mt-2">
               <b-form-group
                 id="input-group-1"
@@ -52,8 +51,10 @@
               </b-form-group>
             </b-collapse>
 
-          <h4>Contact Number</h4>
-          <b-button v-b-toggle.collapse-contact-No><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>
+
+          <div>
+            <h4>Contact Number <b-button v-b-toggle.collapse-contact-No><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
+          </div>
             <b-collapse id="collapse-contact-No" class="mt-2">
               <b-form-group
                 id="input-group-contact-No"
@@ -71,12 +72,14 @@
               </b-form-group>
             </b-collapse>
 
-          <h4>Sex</h4>
+          <div>
+            <h4>Sex <b-button v-b-toggle.collapse-Sex><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
+          </div>
+          
           <b-form-group v-slot="{ ariaDescribedby }">
             <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="male-radios" value="male">Male</b-form-radio>
             <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="female-radios" value="female">Female</b-form-radio>
           </b-form-group>
-          <b-button v-b-toggle.collapse-Sex><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>
             <b-collapse id="collapse-Sex" class="mt-2">
               <b-form-group
                 id="input-group-Sex"
@@ -94,8 +97,11 @@
               </b-form-group>
             </b-collapse>
 
-           <h4>Email</h4>
-           <b-button v-b-toggle.collapse-Email><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>
+          <div>
+             <h4>Email <b-button v-b-toggle.collapse-Email><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
+          </div>
+          
+           
             <b-collapse id="collapse-Email" class="mt-2">
               <b-form-group
                 id="input-group-Email"
@@ -109,15 +115,19 @@
                     required
                   >
                   </b-form-input>
+                  <b-button><b-icon icon="plus" aria-hidden="true"/></b-button>
                   <b-button v-b-toggle.collapse-Email><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
               </b-form-group>
             </b-collapse>
 
-           <h4>Social Media Links</h4>
-           <b-button class=""> F</b-button>
-           <b-button class=""> G</b-button>
-           <b-button class=""> T</b-button>
-           <b-button v-b-toggle.collapse-soc><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>
+          <div>
+            <h4>Social Media Links <b-button v-b-toggle.collapse-soc><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4> 
+          </div>
+           
+           <b-button class=""><img src="https://img.icons8.com/cute-clipart/64/000000/facebook-new.png"height="50px"/></b-button>
+           <b-button class=""><img src="https://img.icons8.com/cute-clipart/64/000000/google-logo.png" height="50px"/></b-button>
+           <b-button class=""><img src="https://img.icons8.com/cute-clipart/64/000000/twitter.png" height="50px"/></b-button>
+           
             <b-collapse id="collapse-soc" class="mt-2">
               <b-form-group
                 id="input-group-soc"
@@ -166,25 +176,6 @@ export default {
 
   components: {
   },
-
-  data() {
-      return {
-        selected: '',
-        types: [
-          'text',
-          'number',
-          'email',
-          'password',
-          'search',
-          'url',
-          'tel',
-          'date',
-          'time',
-          'range',
-          'color'
-        ]
-      }
-    },
     
   mounted(){
     
