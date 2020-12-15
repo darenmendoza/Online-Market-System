@@ -29,7 +29,19 @@
       <b-row>
         <b-col md="3">
           <b-img thumbnail fluid src="https://picsum.photos/250/250/?image=59" alt="Image 3" rounded="circle"></b-img>
-          <b-button class=""><b-icon icon="upload" aria-hidden="true"></b-icon></b-button> 
+          <b-button v-b-modal.modal-upload-img><b-icon icon="upload" aria-hidden="true"></b-icon></b-button>
+
+          <b-modal id="modal-upload-img" title="Upload Profile Image">
+            <p class="my-4">Choose a image file from device</p>
+            <b-form-group label="Image" label-for="form-image" label-cols-lg="3">
+              <b-input-group>
+                <b-input-group-prepend is-text>
+                  <b-icon icon="image-fill"></b-icon>
+                </b-input-group-prepend>
+                <b-form-file id="form-image" :disabled="busy" accept="image/*"></b-form-file>
+              </b-input-group>
+            </b-form-group>
+          </b-modal>
         </b-col>
         <b-col md="6">
           <div><h1>Surname, First Name <b-button v-b-toggle.collapse-name><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h1>
