@@ -8,20 +8,22 @@
           <b-nav-form>
             <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
             <b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
-            <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-            <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+            <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
+            <!-- <input type="text" class="form-control" v-model="findText" /> -->
+            <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
           </b-nav-form>
 
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right v-if="user">
             <!-- Using 'button-content' slot -->
             <template #button-content>
               <em><b-avatar src="https://placekitten.com/300/300">
             </b-avatar></em>
             </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile">Profile</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
+        <nuxt-link to="/" v-if="!user"><b-button size="sm" class="my-2 my-sm-0">Log In/Sign Up</b-button></nuxt-link>
     </b-navbar>
 
     <b-container fluid>
@@ -33,7 +35,7 @@
                 <div>
                 <h2>Best Selling Ebook</h2>
                 <b-card-group deck class="container">
-                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.best">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.best">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
@@ -51,7 +53,7 @@
                 <div>
                 <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
-                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.popular">
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.popular">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
@@ -69,7 +71,7 @@
                 <div>
                 <h2>Recently Added</h2>
                 <b-card-group deck class="container">
-                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.recent">
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="index">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
@@ -136,6 +138,7 @@
 <script>
 import firebase from 'firebase/app'
 import "firebase/firestore"
+import "firebase/auth"
 
 
 export default {
@@ -149,7 +152,13 @@ export default {
             snapshot.docs.forEach(docs => {
                 this.items = [...this.items, docs.data()]
             })
-        })
+        }),
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.user = user;
+        }
+      });
     
        
   },
@@ -169,17 +178,45 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-    }
+    },
 
+
+    displaySearch: function() {
+      let val = this.findText;
+      let arr = this.items;
+      let arrayTitle = [];
+      let result = [];
+      let temp = '';
+      let arrayTemp = [];
+      console.log(`You've searched for: ${val}`);
+      val = val.toLowerCase();
+      for(let i = 0; i < arr.length; i++){
+        temp = arr[i].Title;
+        arrayTitle.push(temp);
+        arrayTemp.push(temp);
+      }
+      console.log('Result:');
+      arrayTemp = arrayTemp.map(arrayTemp => arrayTemp.toLowerCase());
+      for(let i = 0; i < arrayTemp.length; i++){
+        if(arrayTemp[i].includes(val)){
+          result = arrayTitle[i];
+          console.log(result);
+        }
+      }
+      if(result == ''){
+        console.log('No Result Found');
+      }
+    }
     },
 
     data(){
       return {
         value:"",
+        user:"",
 
-        items:[]
+        items:[],
+        findText:""
       }
     },
-    
 }
 </script>
