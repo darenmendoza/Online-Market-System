@@ -180,6 +180,17 @@ export default {
         });
     },
 
+     data(){
+      return {
+        value:"",
+        user:"",
+        findText:"",
+
+        items:[]
+       
+      }
+    },
+
 
     displaySearch: function() {
       let val = this.findText;
@@ -207,16 +218,6 @@ export default {
         console.log('No Result Found');
       }
     }
-    },
-
-    data(){
-      return {
-        value:"",
-        user:"",
-
-        items:[],
-        findText:""
-      }
     },
 }
 </script>
