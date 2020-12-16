@@ -13,16 +13,17 @@
             <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
           </b-nav-form>
 
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right v-if="user">
             <!-- Using 'button-content' slot -->
             <template #button-content>
               <em><b-avatar src="https://placekitten.com/300/300">
             </b-avatar></em>
             </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile">Profile</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
+        <nuxt-link to="/" v-if="!user"><b-button size="sm" class="my-2 my-sm-0">Log In/Sign Up</b-button></nuxt-link>
     </b-navbar>
 
     <b-container fluid>
@@ -34,7 +35,7 @@
                 <div>
                 <h2>Best Selling Ebook</h2>
                 <b-card-group deck class="container">
-                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.best">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.best">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
@@ -52,7 +53,7 @@
                 <div>
                 <h2>Popular Ebooks</h2>
                 <b-card-group deck class="container">
-                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.popular">
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.popular">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
@@ -70,7 +71,7 @@
                 <div>
                 <h2>Recently Added</h2>
                 <b-card-group deck class="container">
-                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items" :key="books.recent">
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="index">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
@@ -137,6 +138,7 @@
 <script>
 import firebase from 'firebase/app'
 import "firebase/firestore"
+import "firebase/auth"
 
 
 export default {
@@ -150,7 +152,13 @@ export default {
             snapshot.docs.forEach(docs => {
                 this.items = [...this.items, docs.data()]
             })
-        })
+        }),
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.user = user;
+        }
+      });
     
        
   },
@@ -172,9 +180,17 @@ export default {
         });
     },
 
-    data: {
-      findText: ''
+     data(){
+      return {
+        value:"",
+        user:"",
+        findText:"",
+
+        items:[]
+       
+      }
     },
+
 
     displaySearch: function() {
       let val = this.findText;
@@ -202,14 +218,6 @@ export default {
         console.log('No Result Found');
       }
     }
-    },
-
-    data(){
-      return {
-        value:"",
-
-        items:[],
-      }
     },
 }
 </script>
