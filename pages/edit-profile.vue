@@ -25,35 +25,47 @@
         </b-navbar-nav>
     </b-navbar>
 
-    <b-container class="edit-profile">
+    <b-container class="edit-profile" v-for="(user,index) in items" :key="index">
       <b-row>
         <b-col md="3">
-          <b-img thumbnail fluid src="https://picsum.photos/250/250/?image=59" alt="Image 3" rounded="circle"></b-img>
-          <b-button class=""><b-icon icon="upload" aria-hidden="true"></b-icon></b-button> 
+          <b-avatar :src="user.Image" size="250"></b-avatar>
+          <b-button class="upload-btn" @click="modalShow = !modalShow"><b-icon icon="upload" aria-hidden="true"></b-icon></b-button> 
+          <b-modal v-model="modalShow" title="Upload Profile Image" ref="modal" hide-footer>
+            <p class="my-4">Upload your Profile</p>
+            <b-form-file
+              v-model="file1"
+              :state="Boolean(file1)"
+              placeholder="Choose a file or drop it here..."
+              drop-placeholder="Drop file here..."
+            ></b-form-file>
+            <div class="mt-3">Selected file: {{ file1 ? file1.name : '' }}</div>
+            <div class="mt-3">
+              <b-button @click="uploadFile" v-if="file1 ? file1.name : ''">Upload Picture</b-button>
+            </div>
+          </b-modal> 
         </b-col>
+
+
         <b-col md="6">
-          <div><h1>Surname, First Name <b-button v-b-toggle.collapse-name><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h1>
+
+          <div><h1>{{user.Name}}  <b-button v-b-toggle.collapse-name><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h1>
           </div>
             <b-collapse id="collapse-name" class="mt-2">
               <b-form-group
                 id="input-group-1"
                 label="Name"
                 label-for="input-1"
+                valid-feedback="Thank you!"
                 >
-                  <b-form-input
-                    id="input-1"
-                    type="text"
-                    placeholder="Surname, First Name"
-                    required
-                  >
-                  </b-form-input>
-                  <b-button v-b-toggle.collapse-name><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
+                  <b-form-input id="input-1" v-model="name" trim></b-form-input>
+                   <b-button v-b-toggle.collapse-name @click="changeName" v-if="name.length > 4"><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
               </b-form-group>
+             
             </b-collapse>
 
 
           <div>
-            <h4>Contact Number <b-button v-b-toggle.collapse-contact-No><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
+            <h4>{{user.Contact}}  <b-button v-b-toggle.collapse-contact-No><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
           </div>
             <b-collapse id="collapse-contact-No" class="mt-2">
               <b-form-group
@@ -65,85 +77,45 @@
                     id="input-1"
                     type="text"
                     placeholder="+63### ### ###"
+                    maxlength="11"
+                    @keypress="onlyNumber"
+                    v-model="contact"
                     required
                   >
                   </b-form-input>
-                  <b-button v-b-toggle.collapse-contact-No><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
+                  <b-button v-b-toggle.collapse-contact-No @click="changeContact" v-if="contact.length == 11"><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
               </b-form-group>
             </b-collapse>
-
           <div>
-            <h4>Sex <b-button v-b-toggle.collapse-Sex><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
+             <h4>{{user.Email}} </h4>
           </div>
           
-          <b-form-group v-slot="{ ariaDescribedby }">
-            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="male-radios" value="male">Male</b-form-radio>
-            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="female-radios" value="female">Female</b-form-radio>
-          </b-form-group>
-            <b-collapse id="collapse-Sex" class="mt-2">
-              <b-form-group
-                id="input-group-Sex"
-                label="Name"
-                label-for="input-1"
-                >
-                  <b-form-input
-                    id="input-1"
-                    type="text"
-                    placeholder="Sex"
-                    required
-                  >
-                  </b-form-input>
-                  <b-button v-b-toggle.collapse-Sex><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
-              </b-form-group>
-            </b-collapse>
 
           <div>
-             <h4>Email <b-button v-b-toggle.collapse-Email><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4>
+            <h4>Social Media Links <!--<b-button v-b-toggle.collapse-soc><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>!--></h4> 
           </div>
-          
-           
-            <b-collapse id="collapse-Email" class="mt-2">
-              <b-form-group
-                id="input-group-Email"
-                label="Name"
-                label-for="input-Email"
-                >
-                  <b-form-input
-                    id="input-Email"
-                    type="text"
-                    placeholder="email"
-                    required
-                  >
-                  </b-form-input>
-                  <b-button><b-icon icon="plus" aria-hidden="true"/></b-button>
-                  <b-button v-b-toggle.collapse-Email><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
-              </b-form-group>
-            </b-collapse>
 
-          <div>
-            <h4>Social Media Links <b-button v-b-toggle.collapse-soc><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button></h4> 
-          </div>
-           
-           <b-button class=""><img src="https://img.icons8.com/cute-clipart/64/000000/facebook-new.png"height="50px"/></b-button>
-           <b-button class=""><img src="https://img.icons8.com/cute-clipart/64/000000/google-logo.png" height="50px"/></b-button>
-           <b-button class=""><img src="https://img.icons8.com/cute-clipart/64/000000/twitter.png" height="50px"/></b-button>
-           
+           <div v-for="(sns,index) in user.SocialMedia" :key="index">
+              <b-link :href="sns">{{sns}}</b-link>
+            </div>
+           <!--
             <b-collapse id="collapse-soc" class="mt-2">
               <b-form-group
                 id="input-group-soc"
-                label="Name"
+                label="Account"
                 label-for="input-soc"
                 >
                   <b-form-input
                     id="input-soc"
                     type="text"
                     placeholder="Link to your account"
+                    v-model="socmed"
                     required
                   >
                   </b-form-input>
                   <b-button v-b-toggle.collapse-soc><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
               </b-form-group>
-            </b-collapse>
+            </b-collapse> !-->
           </b-col>
       </b-row>
     </b-container>
@@ -170,21 +142,35 @@
 <script>
 import firebase from 'firebase/app'
 import "firebase/firestore"
-
+import "firebase/auth"
+import "firebase/storage"
 
 export default {
 
   components: {
   },
+
+  computed: {
+      
+        
+    },
     
   mounted(){
-    
-    firebase.firestore().collection('items').get().then(snapshot => {
+
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+
+          firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
             snapshot.docs.forEach(docs => {
                 this.items = [...this.items, docs.data()]
+                this.id = docs.id
             })
-        })
-    
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+          
+        }
+      });
        
   },
 
@@ -203,10 +189,6 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-    },
-
-    data: {
-      findText: ''
     },
 
     displaySearch: function() {
@@ -237,14 +219,99 @@ export default {
         console.log('No Result Found');
         alert('No Result Found')
       }
-    }
+    },
+
+    changeName() {  
+      
+      this.items[0].Name = this.name;
+      firebase.firestore().collection("User").doc(this.id).update({
+        Name: this.items[0].Name
+      }).then(function() {
+      console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+          console.error("Error updating document: ", error);
+      });
+
+    },
+    onlyNumber ($event) {
+        let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+        if ((keyCode < 48 || keyCode > 57)) {
+            $event.preventDefault();
+      }
+    },
+
+    
+    changeContact() {  
+      
+      this.items[0].Contact = this.contact;
+      firebase.firestore().collection("User").doc(this.id).update({
+        Contact: this.items[0].Contact
+      }).then(function() {
+      console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+          console.error("Error updating document: ", error);
+      });
+    },
+
+    uploadFile(){
+
+      let file = this.file1
+                var storageRef = firebase.storage().ref('Profile/' + this.items[0].Email + '/' + file.name);
+                let uploadTask = storageRef.put(file)
+                
+                uploadTask.on('state_changed', (snapshot) =>{
+
+                }, (error) =>{
+
+                }, () =>{
+
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        this.image = downloadURL
+                        this.items[0].Image = this.image
+                        firebase.firestore().collection("User").doc(this.id).update({
+                          Image: this.items[0].Image
+                        }).then(function() {
+                          
+                        console.log("Document successfully updated!");
+                        })
+                        .catch(function(error) {
+                            console.error("Error updating document: ", error);
+                        });  
+                                  
+                    });
+                });
+
+      this.modalShow = false;
+      
+    },
+    hideModal() {
+        this.$refs['modal'].hide()
+      }
+  
+
     },
 
     data(){
       return {
         value:"",
-
+        user:"",
+        findText:"",
+        selected:"",
         items:[],
+
+        name:"",
+        email:"",
+        contact:"",
+        image:"",
+        socmed:"",
+        id:"",
+
+        file1: null,
+
+         modalShow: false
       }
     },
 }
