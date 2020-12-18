@@ -2,12 +2,13 @@
   <article>
     <client-only>
       <b-navbar toggleable="lg">
-      <b-navbar-brand  tag="b" href="homepage" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
-        <!-- Right aligned nav items -->
+        <nuxt-link to="/"><b-navbar-brand  tag="b" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
+      </nuxt-link>
+      <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
             <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
-            <b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
+            <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
             <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
             <!-- <input type="text" class="form-control" v-model="findText" /> -->
             <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
@@ -184,7 +185,7 @@ export default {
         .auth()
         .signOut()
         .then(user => {
-          this.$router.push("/");
+          this.$router.push("/login");
         })
         .catch(function(error) {
           console.log(error);

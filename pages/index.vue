@@ -1,572 +1,283 @@
 <template>
   <article>
-    {{ state() }}
-    <div class="container" :class="{ 'sign-up-active': signUp }">
-      <div class="overlay-container">
-        <div class="overlay">
-          <div class="overlay-left">
-            <h2>Welcome Back!</h2>
-            <p>Please login with your personal info</p>
-            <button class="invert" id="signIn" @click="signUp = !signUp">
-              Sign In
-            </button>
-          </div>
-          <div class="overlay-right">
-            <h2>Hello, Friend!</h2>
-            <p>Please enter your personal details</p>
-            <button class="invert" id="signUp" @click="signUp = !signUp">
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </div>
-      <div v-if="error" class="error">{{ error.message }}</div>
-      <form @submit.prevent="signup" class="sign-up">
-        <h2>Create login</h2>
-        <div>Use your email for registration</div>
-        <input type="text" placeholder="Name" v-model="name" required />
-        <div class="email">
-          <input type="email" v-model="email" placeholder="Email" required />
-        </div>
-        <div class="password">
-          <input
-            type="password"
-            v-model="password"
-            placeholder="Password"
-            required
-          />
-        </div>
-        <br />
-        <button type="submit" class="button">Sign Up</button>
-      </form>
-      <form @submit.prevent="login" class="sign-in">
-        <h2>Sign In</h2>
-        <div>Use your account</div>
-        <br />
-        <div class="email">
-          <input
-            v-model="email"
-            id="email"
-            type="email"
-            placeholder="Email"
-            required
-          />
-        </div>
-        <div class="password">
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Password"
-            required
-          />
-        </div>
-        <div class="checkbox">
-          <input
-            v-model="checked"
-            type="checkbox"
-            class="form-check-input"
-            id="remembermebox"
-          />
-          <label class="form-check-label" for="remembermebox"
-            >-- Remember Me</label
-          >
-        </div>
-        <a @click="showModal = true">Forgot your password?</a>
-        <button type="submit" class="button">Sign In</button>
-      </form>
-    </div>
-    <transition name="fade" appear>
-      <div
-        class="modal-overlay"
-        v-if="showModal"
-        @click="showModal = false"
-      ></div>
-    </transition>
-    <transition name="form" appear>
-      <div class="modal-form" v-if="showModal">
-        <div class="vue-tempalte">
-          <form @submit.prevent="reset">
-            <h3>Forgot Password</h3>
-            <div class="form-group">
-              <label>Email address</label>
-              <input type="email" v-model="ResetEmail" required />
+    <client-only>
+      <b-navbar toggleable="lg">
+      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
+      </nuxt-link>
+        <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">  
+          <b-nav-form>
+            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
+            <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
+            <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
+            <!-- <input type="text" class="form-control" v-model="findText" /> -->
+            <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
+          </b-nav-form>
+
+          <b-nav-item-dropdown right v-if="users">
+            <!-- Using 'button-content' slot -->
+            <template #button-content>
+              <em><b-avatar :src="avatar">
+            </b-avatar></em>
+            </template>
+            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/admin" v-if="user == 'thebookhaven20@gmail.com'">Admin Setting</nuxt-link></b-dropdown-item>
+            <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+        <nuxt-link to="/login" v-if="!users"><b-button size="sm" class="my-2 my-sm-0">Log In/Sign Up</b-button></nuxt-link>
+    </b-navbar>
+
+    <b-container fluid>
+      <b-row  class="text-center">
+        <b-col >
+          <div class="y-auto">
+            <div class="container">
+              <b-card-group column>
+                <div>
+                <h2>Best Selling Ebook</h2>
+                <b-card-group deck class="container">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="index">
+                      <b-card-text>
+                        {{books.Author}}<br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
+                </b-card-group>
+                </div>
+                <div>
+                <h2>Popular Ebooks</h2>
+                <b-card-group deck class="container">
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.popular">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
+                </b-card-group>
+                </div>
+                <div>
+                <h2>Recently Added</h2>
+                <b-card-group deck class="container">
+                  <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="index">
+                      <b-card-text>
+                        {{books.Author}} <br> 
+                      <div>
+                        <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
+                      </div> 
+                      <p>{{books.Price}}</p>
+                      </b-card-text>
+                      <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                      <template #footer>
+                        <small class="text-muted"> (0) downloaded</small>
+                      </template> 
+                    </b-card>
+                </b-card-group>
+                </div>
+                  <div>
+                      <b-sidebar id="sidebar-right" :title="title" img-top right shadow>
+                        <div class="px-2 py-3">
+                          <b-img :src="img" fluid thumbnail></b-img>
+                          <div>
+                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
+                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          </div>
+                          <p class="text-left">
+                            <ul>
+                              <li>{{author}}</li>
+                              <li>{{synopsis}}</li>
+                              <li>{{genre}}</li>
+                              <li>Price: Php {{price}}</li>
+                            </ul>
+                          </p>
+                           <b-form-rating variant="warning" id="rating-inline" inline :value="ratings" readonly></b-form-rating>
+                          <p>Rate this book?</p>                         
+                          
+                        </div>
+                      </b-sidebar>
+                    </div>
+               
+
+              </b-card-group>
             </div>
-            <button type="submit">Reset password</button>
-          </form>
-        </div>
-      </div>
-    </transition>
+            
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
+
+    <b-container fluid class="page-footer">
+      <b-row>
+        <b-col class="text-center"><h4>The Book Haven</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos corporis, cumque nostrum accusamus, mollitia excepturi, non incidunt iure explicabo totam temporibus perspiciatis qui? Non nostrum sequi rerum accusantium delectus optio.</p>
+        </b-col>
+        <b-col class="text-center"><h4>Payment</h4>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque ratione earum voluptate quae sint suscipit sapiente. Sapiente, porro distinctio ducimus consequuntur nulla, nihil numquam quo modi ratione, quas at?
+        </p>
+        </b-col>
+        <b-col class="text-center"><h4>Customer Service</h4>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum repellat officia ipsa incidunt nam vitae adipisci dolores hic dolorum officiis voluptatem tenetur asperiores neque, necessitatibus facilis deleniti quo odio ab.</p>
+        </b-col>
+      </b-row>
+    </b-container>
+    </client-only>
   </article>
 </template>
 
-<script>
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore"
 
-var user = firebase.auth().currentUser;
-let userId = "thebookhaven20@gmail.com";
+<script>
+import firebase from 'firebase/app'
+import "firebase/firestore"
+import "firebase/auth"
+
 
 export default {
-  methods: {
-    state() {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          console.log(user);
-        }
-      });
-    },
 
-    signup() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then((user) => {
-          firebase.firestore().collection("User").add({
-              Name: this.name,
-              Email: this.email,
-              Role: 'Client',
-              Image: 'Not Uploaded',
-              Contact: 'Please Enter Contact Number',
-              Cart:[],
-              Status:"Active",
-              SocialMedia:[]
-          })
-          .then(function(docRef) {
-              console.log("Document written with ID: ", docRef.id);
-          })
-          .catch(function(error) {
-              console.error("Error adding document: ", error);
-          });
+  components: {
+  },
 
-          alert("Thank you for signing up");
-          console.log(user);
-          firebase
-            .auth()
-            .currentUser.sendEmailVerification()
-            .then((user) => {
-              alert("Verification Email Sent");
-            })
-            .catch((error) => {
-              console.log(error);
-              this.error = error;
-            });
-        })
-        .catch(function(error) {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-
-          if (errorCode == "auth/weak-password") {
-            alert("The password is too weak.");
-          } else {
-            alert(errorMessage);
-          }
-          console.log(error);
-        });
-    },
-    login() {
-      
-      if(this.email == userId)
-      {
-        
-         firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then((user) => {
-          this.$router.push("/admin");
-          if (document.getElementById("remembermebox").checked == true) {
-            firebase
-              .auth()
-              .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-          } else {
-            firebase
-              .auth()
-              .setPersistence(firebase.auth.Auth.Persistence.SESSION);
-          }
-        })
-        .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          // [START_EXCLUDE]
-          if (errorCode === "auth/wrong-password") {
-            alert("Wrong password.");
-          }
-          if (errorCode === "auth/invalid-email") {
-            alert("Invalid email.");
-          }
-          if (errorCode === "auth/user-disabled") {
-            alert("User disabled.");
-          }
-          if (errorCode === "auth/user-not-found") {
-            alert("User Not Found");
-          }
-          console.log(error);
-          // document.getElementById('login').disabled = false;
-          // [END_EXCLUDE]
-        });
-
-      }
-
-
-
-
-      firebase.firestore().collection('User').where("Email","==",this.email).get().then(snapshot => {
+  mounted(){
+    
+    firebase.firestore().collection('items').get().then(snapshot => {
             snapshot.docs.forEach(docs => {
-                if(docs.data().Status == 'Active')
-                {
-                    firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then((user) => {
-          console.log(user.user.email);
-          if (user.user.email != userId) {
-            this.$router.push("/homepage");
-          } else {
-            document.getElementById("email").value = "";
-            document.getElementById("password").value = "";
-          }
+                this.items = [...this.items, docs.data()]
+            })
+        }),
 
-          if (document.getElementById("remembermebox").checked == true) {
-            firebase
-              .auth()
-              .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-          } else {
-            firebase
-              .auth()
-              .setPersistence(firebase.auth.Auth.Persistence.SESSION);
-          }
-        })
-        .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          // [START_EXCLUDE]
-          if (errorCode === "auth/wrong-password") {
-            alert("Wrong password.");
-          }
-          if (errorCode === "auth/invalid-email") {
-            alert("Invalid email.");
-          }
-          if (errorCode === "auth/user-disabled") {
-            alert("User disabled.");
-          }
-          if (errorCode === "auth/user-not-found") {
-            alert("User Not Found");
-          }
-          console.log(error);
-          // document.getElementById('login').disabled = false;
-          // [END_EXCLUDE]
-        });
-
-
-
-
-
-
-                }
-                else{
-                  alert("Account Disabled!")
-                }
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.users = user.email;
+           firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+              this.user = [...this.user, docs.data()]
+                this.avatar = docs.data().Image
+                this.id = docs.id
             })
         }).catch(function(error) {
         console.log("Error getting documents: ", error);
     });
+        }
+      });
 
+    
+       
+  },
 
-
-
-      
-    },
-    reset() {
+  methods: {
+      linkGen(pageNum) {
+        return pageNum === 1 ? '?' : `?page=${pageNum}`
+      },
+       signout() {
       firebase
         .auth()
-        .sendPasswordResetEmail(this.ResetEmail)
-        .then(function(result) {
-          alert("Password Reset Email Sent!");
-          window.location.reload(true);
+        .signOut()
+        .then(user => {
+          console.log(user);
+          this.$router.push("/login");
         })
         .catch(function(error) {
-          alert("Error occured! please try again next time");
           console.log(error);
-          window.location.reload(true);
         });
     },
-  },
-  data: () => {
-    return {
-      name:"",
-      email: "",
-      password: "",
-      error: "",
-      signUp: false,
-      ResetEmail: "",
-      showModal: false,
-      checked: false,
-    };
-  },
-};
-</script>
-<style lang="scss" scoped>
-.article {
-  display: flex;
-  justify-content: center;
-}
-.container {
-  position: absolute;
-  top: 10%;
-  left: 25%;
-  width: 768px;
-  height: 480px;
-  overflow: hidden;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
-  background: #52796f;
 
-  .overlay-container {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 50%;
-    height: 100%;
-    overflow: hidden;
-    transition: transform 0.5s ease-in-out;
-    z-index: 100;
-  }
-  .overlay {
-    position: relative;
-    left: -100%;
-    height: 100%;
-    width: 200%;
-    background: #84a98c;
-    color: #fff;
-    transform: translateX(0);
-    transition: transform 0.5s ease-in-out;
-  }
-  @mixin overlays($property) {
-    position: absolute;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-direction: column;
-    padding: 20% 8%;
-    width: calc(50% -80px);
-    height: calc(100% -130px);
-    text-align: center;
-    transform: translateX($property);
-    transition: transform 0.5s ease-in-out;
-  }
-  .overlay-left {
-    @include overlays(-0%);
-  }
-  .overlay-right {
-    @include overlays(0);
-    right: 0;
-  }
-}
-h2 {
-  margin: 0;
-}
-p {
-  margin: 20px 0 30px;
-}
-a {
-  color: #222;
-  text-decoration: none;
-  margin: 15px 0;
-  font-size: 1rem;
-}
-button {
-  border: 1px solid #009345;
-  background-color: #2f3e46;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 10px 40px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.1s ease-in;
-  &:active {
-    transform: scale(0.9);
-  }
-  &:focus {
-    outline: none;
-  }
-}
-button.invert {
-  background-color: transparent;
-  border-color: #fff;
-}
-form {
-  position: absolute;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-direction: column;
-  padding: 70px 83px;
-  width: calc(50% -90px);
-  height: calc(100% -180px);
+    displaySearch: function() {
+      let val = this.findText;
+      let arr = this.items;
+      let arrayTitle = [];
+      let result = [];
+      let temp = '';
+      let arrayTemp = [];
+      console.log(`You've searched for: ${val}`);
+      val = val.toLowerCase();
+      for(let i = 0; i < arr.length; i++){
+        temp = arr[i].Title;
+        arrayTitle.push(temp);
+        arrayTemp.push(temp);
+      }
+      console.log('Result:');
+      arrayTemp = arrayTemp.map(arrayTemp => arrayTemp.toLowerCase());
+      for(let i = 0; i < arrayTemp.length; i++){
+        if(arrayTemp[i].includes(val)){
+          result = arrayTitle[i];
+          alert(result);
+        }
+      }
+      if(result == ''){
+        alert('No Result Found');
+      }
+    },
 
-  text-align: center;
-  background: #cad2c5;
-  transition: all 0.5s ease-in-out;
-  div {
-    font-size: 1rem;
-  }
+    viewDetails(title,image,author,ratings,price,synopsis,genre){
+        this.title = title;
+        this.img = image;
+        this.author = author;
+        this.ratings = ratings;
+        this.price = price;
+        this.synopsis = synopsis;
+        this.genre = genre;
+    },
 
-  input {
-    background-color: #eee;
-    border: none;
-    padding: 8px 20px;
-    margin: 6px 0;
-    border-radius: 15px;
-    border-bottom: 1px solid #ddd;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 -1px 1px #fff,
-      0 1px 0 #fff;
-    overflow: hidden;
-    &:focus {
-      outline: none;
-      background-color: #fff;
+    addedToCart: function(){
+      // db.items()
+      var bookTitle = this.title;
+      //alert(bookTitle);
+
+      firebase.firestore().collection("User").doc(this.id).update({
+        Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
+      }).then(function() {
+      console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+          console.error("Error updating document: ", error);
+      });
     }
-  }
-}
 
-.sign-in {
-  left: 0;
-  z-index: 2;
-}
-.sign-up {
-  left: 0;
-  z-index: 1;
-  opacity: 0;
-}
-.sign-up-active {
-  .sign-in {
-    transform: translateX(100%);
-  }
-  .sign-up {
-    transform: translateX(100%);
-    opacity: 1;
-    z-index: 5;
-    animation: show 0.5s;
-  }
-  .overlay-container {
-    transform: translateX(-100%);
-  }
-  .overlay {
-    transform: translateX(50%);
-  }
-  .overlay-left {
-    transform: translateX(0);
-  }
-  .overlay-right {
-    transform: translateX(20%);
-  }
-}
-@keyframes show {
-  0% {
-    opacity: 0;
-    z-index: 1;
-  }
-  49% {
-    opacity: 0;
-    z-index: 1;
-  }
-  50% {
-    opacity: 1;
-    z-index: 10;
-  }
-}
+    },
 
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 20px;
-}
+    // addCart() {  
+    //   var bookTitle = this.title
+    //   this.items[0].Cart = this.bookTitle;
+      
 
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+    // },
 
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ffff;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
+    
+    data(){
+      return {
+        value:"",
+        users:"",
+        findText:"",
+        avatar:"",
+        count: 0,
+        index: 0,
+        id:"",
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 15px;
-  width: 15px;
-  left: 4px;
-  bottom: 2px;
-  background-color: #2f3e46;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
+        items:[],
+        user:[],
 
-input:checked + .slider {
-  background-color: #009345;
+        title:"",
+        img:"",
+        ratings:"",
+        author:"",
+        price:"",
+        synopsis:"",
+        genre:""
+       
+      }
+    },
 }
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #1fd172;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-// TEMPORARY MODAL ANIMATION WILL CHANGE NEXT SPRINT
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 101;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1.5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.modal-form {
-  position: fixed;
-  top: 19%;
-  left: 40%;
-  transform: translate(-19%, -40%);
-  z-index: 102;
-}
-</style>
+</script>
