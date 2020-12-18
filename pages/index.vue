@@ -24,7 +24,7 @@
       <form @submit.prevent="signup" class="sign-up">
         <h2>Create login</h2>
         <div>Use your email for registration</div>
-        <input type="text" placeholder="Name" required />
+        <input type="text" placeholder="Name" v-model="name" required />
         <div class="email">
           <input type="email" v-model="email" placeholder="Email" required />
         </div>
@@ -43,13 +43,6 @@
         <h2>Sign In</h2>
         <div>Use your account</div>
         <br />
-        <div>
-          <label class="switch">
-            <input type="checkbox" id="slider" />
-            <span class="slider round"></span>
-          </label>
-          User/Admin
-        </div>
         <div class="email">
           <input
             v-model="email"
@@ -76,7 +69,7 @@
             id="remembermebox"
           />
           <label class="form-check-label" for="remembermebox"
-            >--  Remember Me</label
+            >-- Remember Me</label
           >
         </div>
         <a @click="showModal = true">Forgot your password?</a>
@@ -110,13 +103,15 @@
 <script>
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore"
+
 var user = firebase.auth().currentUser;
-let userId = "mendozadarenp@gmail.com";
+let userId = "thebookhaven20@gmail.com";
 
 export default {
   methods: {
     state() {
-      firebase.auth().onAuthStateChanged(user => {
+      firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           console.log(user);
         }
@@ -127,16 +122,33 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(user => {
+        .then((user) => {
+          firebase.firestore().collection("User").add({
+              Name: this.name,
+              Email: this.email,
+              Role: 'Client',
+              Image: 'Not Uploaded',
+              Contact: 'Please Enter Contact Number',
+              Cart:[],
+              Status:"Active",
+              SocialMedia:[]
+          })
+          .then(function(docRef) {
+              console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+              console.error("Error adding document: ", error);
+          });
+
           alert("Thank you for signing up");
           console.log(user);
           firebase
             .auth()
             .currentUser.sendEmailVerification()
-            .then(user => {
+            .then((user) => {
               alert("Verification Email Sent");
             })
-            .catch(error => {
+            .catch((error) => {
               console.log(error);
               this.error = error;
             });
@@ -154,21 +166,63 @@ export default {
         });
     },
     login() {
-      firebase
+      
+      if(this.email == userId)
+      {
+        
+         firebase
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
-        .then(user => {
+        .then((user) => {
+          this.$router.push("/admin");
+          if (document.getElementById("remembermebox").checked == true) {
+            firebase
+              .auth()
+              .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+          } else {
+            firebase
+              .auth()
+              .setPersistence(firebase.auth.Auth.Persistence.SESSION);
+          }
+        })
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          // [START_EXCLUDE]
+          if (errorCode === "auth/wrong-password") {
+            alert("Wrong password.");
+          }
+          if (errorCode === "auth/invalid-email") {
+            alert("Invalid email.");
+          }
+          if (errorCode === "auth/user-disabled") {
+            alert("User disabled.");
+          }
+          if (errorCode === "auth/user-not-found") {
+            alert("User Not Found");
+          }
+          console.log(error);
+          // document.getElementById('login').disabled = false;
+          // [END_EXCLUDE]
+        });
+
+      }
+
+
+
+
+      firebase.firestore().collection('User').where("Email","==",this.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                if(docs.data().Status == 'Active')
+                {
+                    firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then((user) => {
           console.log(user.user.email);
-          if (
-            user.user.email == userId &&
-            document.getElementById("slider").checked
-          ) {
-            this.$router.push("/admin");
-          } else if (document.getElementById("slider").checked == false) {
+          if (user.user.email != userId) {
             this.$router.push("/homepage");
           } else {
-            window.alert("You are not an Admin");
-            document.getElementById("slider").checked = false;
             document.getElementById("email").value = "";
             document.getElementById("password").value = "";
           }
@@ -203,6 +257,25 @@ export default {
           // document.getElementById('login').disabled = false;
           // [END_EXCLUDE]
         });
+
+
+
+
+
+
+                }
+                else{
+                  alert("Account Disabled!")
+                }
+            })
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+
+
+
+
+      
     },
     reset() {
       firebase
@@ -217,19 +290,20 @@ export default {
           console.log(error);
           window.location.reload(true);
         });
-    }
+    },
   },
   data: () => {
     return {
+      name:"",
       email: "",
       password: "",
       error: "",
       signUp: false,
       ResetEmail: "",
       showModal: false,
-      checked: false
+      checked: false,
     };
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

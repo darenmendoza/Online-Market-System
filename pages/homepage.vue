@@ -16,10 +16,11 @@
           <b-nav-item-dropdown right v-if="user">
             <!-- Using 'button-content' slot -->
             <template #button-content>
-              <em><b-avatar src="https://placekitten.com/300/300">
+              <em><b-avatar :src="avatar">
             </b-avatar></em>
             </template>
-            <b-dropdown-item><nuxt-link to="/edit-profile">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/admin" v-if="user == 'thebookhaven20@gmail.com'">Admin Setting</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -156,7 +157,14 @@ export default {
 
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          this.user = user;
+          this.user = user.email;
+           firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                this.avatar = docs.data().Image
+            })
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
         }
       });
     
@@ -179,18 +187,6 @@ export default {
           console.log(error);
         });
     },
-
-     data(){
-      return {
-        value:"",
-        user:"",
-        findText:"",
-
-        items:[]
-       
-      }
-    },
-
 
     displaySearch: function() {
       let val = this.findText;
@@ -218,6 +214,17 @@ export default {
         console.log('No Result Found');
       }
     }
+    },
+    data(){
+      return {
+        value:"",
+        user:"",
+        findText:"",
+        avatar:"",
+
+        items:[]
+       
+      }
     },
 }
 </script>
