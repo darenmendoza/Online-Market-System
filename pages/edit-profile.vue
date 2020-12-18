@@ -16,7 +16,7 @@
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template #button-content>
-              <em><b-avatar src="https://placekitten.com/300/300">
+              <em><b-avatar :src="avatar">
             </b-avatar></em>
             </template>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
@@ -34,8 +34,9 @@
             <b-form-file
               v-model="file1"
               :state="Boolean(file1)"
-              placeholder="Choose a file or drop it here..."
+              placeholder="Choose a Picture or drop it here..."
               drop-placeholder="Drop file here..."
+              accept="image/*"
             ></b-form-file>
             <div class="mt-3">Selected file: {{ file1 ? file1.name : '' }}</div>
             <div class="mt-3">
@@ -163,14 +164,12 @@ export default {
             snapshot.docs.forEach(docs => {
                 this.items = [...this.items, docs.data()]
                 this.id = docs.id
+                this.avatar = docs.data().Image
             })
         }).catch(function(error) {
         console.log("Error getting documents: ", error);
     });
           
-        } else{
-          alert("You must first Log in to access this page");
-          this.$router.push("/");
         }
       });
        
@@ -185,7 +184,6 @@ export default {
         .auth()
         .signOut()
         .then(user => {
-          console.log(user);
           this.$router.push("/");
         })
         .catch(function(error) {
@@ -273,6 +271,7 @@ export default {
                         console.log('File available at', downloadURL);
                         this.image = downloadURL
                         this.items[0].Image = this.image
+                        this.avatar = this.items[0].Image
                         firebase.firestore().collection("User").doc(this.id).update({
                           Image: this.items[0].Image
                         }).then(function() {
@@ -303,6 +302,7 @@ export default {
         findText:"",
         selected:"",
         items:[],
+        avatar:"",
 
         name:"",
         email:"",
