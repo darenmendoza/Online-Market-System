@@ -185,7 +185,7 @@ export default {
         .auth()
         .signOut()
         .then(user => {
-          this.$router.push("/login");
+          this.$router.push("/");
         })
         .catch(function(error) {
           console.log(error);
@@ -289,9 +289,6 @@ export default {
       this.modalShow = false;
       
     },
-    hideModal() {
-        this.$refs['modal'].hide()
-      }
   
 
     },
