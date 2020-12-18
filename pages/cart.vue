@@ -6,7 +6,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
-            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
+            <b-button><b-icon icon="heart-fill" aria-hidden="true" ></b-icon> Wishlist </b-button> 
             <b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
             <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
             <!-- <input type="text" class="form-control" v-model="findText" /> -->
@@ -27,6 +27,37 @@
 
     <b-container class="cart-component">
       <h1>ADD TO CART</h1>
+      <b-card no-body class="overflow-hidden" v-for="books in userData.Cart" :key="index" v-model="itemCart">
+        <b-row no-gutters>
+          <b-col md="3">
+            <b-card-img src="https://firebasestorage.googleapis.com/v0/b/vue-firebase-5c4f1.appspot.com/o/Cover%20Photos%2F010.jpg?alt=media&token=27fc6848-365a-4a60-a1e5-9ff91f5cb970" alt="Image" class="rounded-0"></b-card-img>
+            <div>
+              <b-form-checkbox class="cart-checkbox" size="lg"></b-form-checkbox>
+            </div>
+            
+          </b-col>
+          <b-col md="6">
+            <b-card-body :title="books"> 
+              <b-card-text><br><br>
+                
+              </b-card-text>
+              <b-card-text>
+                Genre: 
+              </b-card-text>
+              <b-card-text>
+                <h5>Price: Php {{books.Price}}</h5>
+              </b-card-text>
+                <br>
+                <br>
+              <b-button variant="outline-primary" v-on:click.prevent="itemCart">View Details</b-button>
+              <b-button><b-icon icon="trash" aria-hidden="true"></b-icon></b-button>
+            </b-card-body>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-container>
+
+    <!-- <b-container class="cart-component">
       <b-card no-body class="overflow-hidden">
         <b-row no-gutters>
           <b-col md="3">
@@ -57,40 +88,7 @@
           </b-col>
         </b-row>
       </b-card>
-    </b-container>
-
-    <b-container class="cart-component">
-      <b-card no-body class="overflow-hidden">
-        <b-row no-gutters>
-          <b-col md="3">
-            <b-card-img src="https://picsum.photos/400/400/?image=20" alt="Image" class="rounded-0"></b-card-img>
-            <div>
-              <b-form-checkbox class="cart-checkbox" size="lg"></b-form-checkbox>
-            </div>
-            
-          </b-col>
-          <b-col md="6">
-            <b-card-body title="Book Name"> 
-              <b-card-text>
-                Author
-              </b-card-text>
-              <b-card-text>
-                Publisher
-              </b-card-text>
-              <b-card-text>
-                <h5>Price</h5>
-              </b-card-text>
-                <br>
-                <br>
-              
-
-              <b-button variant="outline-primary">View Details</b-button>
-              <b-button><b-icon icon="trash" aria-hidden="true"></b-icon></b-button>
-            </b-card-body>
-          </b-col>
-        </b-row>
-      </b-card>
-    </b-container>
+    </b-container> -->
 
     <b-container fluid class="page-footer">
       <b-row>
@@ -127,7 +125,30 @@ export default {
             snapshot.docs.forEach(docs => {
                 this.items = [...this.items, docs.data()]
             })
-        })
+        }),
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.user = user;
+        }
+      });
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+
+          firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                this.items = [...this.items, docs.data()]
+                this.id = docs.id
+                this.userData = docs.data()
+                this.userCart = userData.Cart
+            })
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+          
+        }
+      });
     
        
   },
@@ -151,6 +172,11 @@ export default {
 
     data: {
       findText: ''
+    },
+
+    itemCart: function (){
+      let cartItems = this.userData.Cart;
+      console.log(cartItems);
     },
 
     displaySearch: function() {
@@ -184,11 +210,24 @@ export default {
     }
     },
 
+    
+
     data(){
       return {
         value:"",
-
+        user:"",
+        findText:"",
+        selected:"",
         items:[],
+
+        name:"",
+        email:"",
+        contact:"",
+        image:"",
+        socmed:"",
+        id:"",
+        userData:[],
+        userCart:[],
       }
     },
 }
