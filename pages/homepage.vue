@@ -7,7 +7,7 @@
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
             <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
-            <b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
+            <b-button href="cart"><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
             <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
             <!-- <input type="text" class="form-control" v-model="findText" /> -->
             <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
@@ -36,15 +36,15 @@
                 <div>
                 <h2>Best Selling Ebook</h2>
                 <b-card-group deck class="container">
-                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.best">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="books.best">
                       <b-card-text>
-                        {{books.Author}} <br> 
+                        {{books.Author}}<br> 
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
                       <p>{{books.Price}}</p>
                       </b-card-text>
-                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
+                      <b-button v-b-toggle.sidebar-right v-on:click.prevent="viewDetails" type="submit">View Details</b-button>
                       <template #footer>
                         <small class="text-muted"> (0) downloaded</small>
                       </template> 
@@ -88,17 +88,18 @@
                 </b-card-group>
                 </div>
                   <div>
-                      <b-sidebar id="sidebar-right" title="Book Title" right shadow>
+                      <b-sidebar id="sidebar-right" :title="title = books.Title" img-top v-for="books in items.slice(0,1)" :key="books.Popular" right shadow>
                         <div class="px-2 py-3">
                           <b-img src="@/assets/empty-out-the-negative-1.jpg" fluid thumbnail></b-img>
                           <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
-                          <b-button><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          <b-button v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          
                           <p class="text-left">
                             <ul>
-                              <li>Author</li>
-                              <li>Sypnosis Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi deserunt consectetur debitis perspiciatis id quam sint cupiditate explicabo praesentium provident, esse eaque fugit quidem voluptatem corrupti at nisi accusantium iusto.</li>
-                              <li>Genre</li>
-                              <li>Date Published</li>
+                              <li>{{books.Author}}</li>
+                              <li>{{books.Synopsis}}</li>
+                              <li>{{books.Genre}}</li>
+                              <li>Price: Php {{books.Price}}</li>
                             </ul>
                           </p>
                            <b-form-rating variant="warning" id="rating-inline" inline value="3"></b-form-rating>
@@ -167,6 +168,21 @@ export default {
     });
         }
       });
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+
+          firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                this.items = [...this.items, docs.data()]
+                this.id = docs.id
+            })
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+          
+        }
+      });
     
        
   },
@@ -207,13 +223,57 @@ export default {
       for(let i = 0; i < arrayTemp.length; i++){
         if(arrayTemp[i].includes(val)){
           result = arrayTitle[i];
-          console.log(result);
+          alert(result);
         }
       }
       if(result == ''){
-        console.log('No Result Found');
+        alert('No Result Found');
       }
+    },
+
+    viewDetails: function(){
+      //alert(index);
+    },
+
+    addedToCart: function(){
+      // db.items()
+      var bookTitle = this.title;
+      //alert(bookTitle);
+      alert("Added To Cart \n" + bookTitle);
+
+      firebase.firestore().collection("User").doc(this.id).update({
+        Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
+      }).then(function() {
+      console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+          console.error("Error updating document: ", error);
+      });
     }
+
+    },
+
+    // addCart() {  
+    //   var bookTitle = this.title
+    //   this.items[0].Cart = this.bookTitle;
+      
+
+    // },
+
+    
+
+     data(){
+      return {
+        value:"",
+        user:"",
+        findText:"",
+        count: 0,
+        index: 0,
+        title: "",
+
+        items:[]
+       
+      }
     },
     data(){
       return {
