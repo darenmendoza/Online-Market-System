@@ -19,7 +19,6 @@
               <em><b-avatar src="https://placekitten.com/300/300">
             </b-avatar></em>
             </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -169,6 +168,9 @@ export default {
         console.log("Error getting documents: ", error);
     });
           
+        } else{
+          alert("You must first Log in to access this page");
+          this.$router.push("/");
         }
       });
        

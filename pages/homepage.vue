@@ -19,7 +19,8 @@
               <em><b-avatar src="https://placekitten.com/300/300">
             </b-avatar></em>
             </template>
-            <b-dropdown-item><nuxt-link to="/edit-profile">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/admin" v-if="user == 'thebookhaven20@gmail.com'">Admin Setting</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -156,7 +157,7 @@ export default {
 
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          this.user = user;
+          this.user = user.email;
         }
       });
     
@@ -179,18 +180,6 @@ export default {
           console.log(error);
         });
     },
-
-     data(){
-      return {
-        value:"",
-        user:"",
-        findText:"",
-
-        items:[]
-       
-      }
-    },
-
 
     displaySearch: function() {
       let val = this.findText;
@@ -218,6 +207,16 @@ export default {
         console.log('No Result Found');
       }
     }
+    },
+    data(){
+      return {
+        value:"",
+        user:"",
+        findText:"",
+
+        items:[]
+       
+      }
     },
 }
 </script>
