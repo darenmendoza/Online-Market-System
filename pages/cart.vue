@@ -62,10 +62,7 @@
                       <b-sidebar id="sidebar-right" :title="title" img-top right shadow>
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
-                          <div>
-                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
-                          <b-button v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
-                          </div>
+              
                           <p class="text-left">
                             <ul>
                               <li>{{author}}</li>
@@ -172,6 +169,8 @@ export default {
           
               })
            })
+        } else{
+          this.$router.push('/login')
         }
       })
     

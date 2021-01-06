@@ -160,6 +160,7 @@ export default {
 
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
+          this.logged = true
           this.users = user.email;
            firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
             snapshot.docs.forEach(docs => {
@@ -232,18 +233,25 @@ export default {
     },
 
     addedToCart: function(){
-      // db.items()
-      var bookTitle = this.title;
-      //alert(bookTitle);
+      
+      if(this.logged){
+        // db.items()
+        var bookTitle = this.title;
 
-      firebase.firestore().collection("User").doc(this.id).update({
-        Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
-      }).then(function() {
-      console.log("Document successfully updated!");
-      })
-      .catch(function(error) {
-          console.error("Error updating document: ", error);
-      });
+        firebase.firestore().collection("User").doc(this.id).update({
+          Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
+        }).then(function() {
+        alert(bookTitle + " is added to cart");
+        console.log("Document successfully updated!");
+        })
+        .catch(function(error) {
+            console.error("Error updating document: ", error);
+        });
+      } else {
+        this.$router.push('/login')
+      }
+
+      
     }
 
     },
@@ -265,6 +273,7 @@ export default {
         count: 0,
         index: 0,
         id:"",
+        logged:false,
 
         items:[],
         user:[],
