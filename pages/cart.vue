@@ -27,42 +27,47 @@
         <nuxt-link to="/login" v-if="!users"><b-button size="sm" class="my-2 my-sm-0">Log In/Sign Up</b-button></nuxt-link>
     </b-navbar>
 
-    <b-container class="cart-component">
-      <h1>ADD TO CART</h1>
-      <b-card no-body class="overflow-hidden" v-for="(books,index) in items" :key="index">
-        <b-row no-gutters>
-          <b-col md="3">
-            <b-card-img :src="books.Image" alt="Image" class="rounded-0"></b-card-img>
-            <div>
-              <b-form-checkbox class="cart-checkbox" size="lg"></b-form-checkbox>
-            </div>
-            
-          </b-col>
-          <b-col md="6">
-            <b-card-body :title="books.Title"> 
-              <b-card-text>
-                Author: {{books.Author}}
-              </b-card-text>
-  
-              <b-card-text>
-                Genre: {{books.Genre}}
-              </b-card-text>
-              <b-card-text>
-                <h5>Price: Php {{books.Price}}</h5>
-              </b-card-text>
-                <br>
-                <br>
-              <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
-              <b-button><b-icon icon="trash" aria-hidden="true" @click="removeCart(books.Title)"></b-icon></b-button>
-            </b-card-body>
-          </b-col>
-        </b-row>
-      </b-card>
+        
+      
+      <b-container class="cart-component">
+        <h1 class="text-center">ADD TO CART</h1>
+        <b-card no-body class="overflow-hidden" v-for="(books,index) in items" :key="index">
+          <b-row no-gutters>
+            <b-col md="3">
+              <b-card-img :src="books.Image" alt="Image" class="rounded-0"></b-card-img>
+              <div>
+                <b-form-checkbox class="cart-checkbox" size="lg"></b-form-checkbox>
+              </div>
+              
+            </b-col>
+            <b-col md="6">
+              <b-card-body :title="books.Title"> 
+                <b-card-text>
+                  Author: {{books.Author}}
+                </b-card-text>
+    
+                <b-card-text>
+                  Genre: {{books.Genre}}
+                </b-card-text>
+                <b-card-text>
+                  <h5>Price: Php {{books.Price}}</h5>
+                </b-card-text>
+                  <br>
+                  <br>
+                <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                <b-button><b-icon icon="trash" aria-hidden="true" @click="removeCart(books.Title)"></b-icon></b-button>
+              </b-card-body>
+            </b-col>
+          </b-row>
+        </b-card>
       <div>
                       <b-sidebar id="sidebar-right" :title="title" img-top right shadow>
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
-              
+                          <div>
+                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
+                          <b-button v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          </div>
                           <p class="text-left">
                             <ul>
                               <li>{{author}}</li>
@@ -77,6 +82,48 @@
                         </div>
                       </b-sidebar>
                     </div>
+    <b-container class="checkout-container" fluid>
+
+      <b-navbar class="checkout-bar">
+        <div>
+          <b-form-checkbox
+                id="checkbox-select-all"
+                name="checkout-select-all"
+                value="selectall"
+                unchecked-value="not_accepted"
+              >
+          <h6>Select All </h6>
+          </b-form-checkbox> 
+        </div>
+        <div>
+          <h6>Book Subtotal (No) item/s: TotalPrice-PHP 00.00</h6>
+        </div>
+
+        <div>
+          <b-button v-b-modal.checkout-modal><h4><b-icon icon="bag-check-fill" aria-hidden="true"></b-icon> Checkout</h4></b-button>
+
+          <b-modal id="checkout-modal" scrollable title="Checkout Summary">
+            <h6>Send Email to:</h6>
+            <b-form-input v-model="text" placeholder="johndoe@email.com"></b-form-input>
+            <b-form-checkbox
+              id="reciept-box-modal"
+              v-model="status"
+              name="recieptcheckbox"
+              value="accepted"
+              unchecked-value="not_accepted"
+            >
+              Send Digital Reciept to email
+            </b-form-checkbox>
+          </b-modal>
+        </div>
+        
+      </b-navbar>      
+              
+            
+                
+    
+    </b-container>
+
     </b-container>
 
     <!-- <b-container class="cart-component">
@@ -169,8 +216,6 @@ export default {
           
               })
            })
-        } else{
-          this.$router.push('/login')
         }
       })
     
