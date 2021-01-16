@@ -35,8 +35,8 @@
           <b-row no-gutters>
             <b-col md="3">
               <b-card-img :src="books.Image" alt="Image" class="rounded-0"></b-card-img>
-              <div> 
-                <b-form-checkbox class="cart-checkbox" size="lg" :value="books.Title" unchecked-value="0" v-model="checkTitles" @change="checkBox"></b-form-checkbox>           
+              <div>
+                <b-form-checkbox class="cart-checkbox" size="lg"></b-form-checkbox>
               </div>
               
             </b-col>
@@ -65,6 +65,8 @@
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
                           <div>
+                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
+                          <b-button v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
                           </div>
                           <p class="text-left">
                             <ul>
@@ -99,13 +101,12 @@
 
         <div>
           <b-button v-b-modal.checkout-modal><h4><b-icon icon="bag-check-fill" aria-hidden="true"></b-icon> Checkout</h4></b-button>
-          
-          <b-modal id="checkout-modal" scrollable title="Checkout Summary" hide-footer>
-            <h6>Total: {{checkOutPrice}}</h6>
-            
-            <b-button class="mt-3" block @click="downloadPDF">Buy Now</b-button>
-            <b-button class="mt-3" block @click="$bvModal.hide('checkout-modal')">Cancel</b-button>
-            <!-- <b-form-input v-model="text" placeholder="johndoe@email.com"></b-form-input>
+
+          <b-modal id="checkout-modal" scrollable title="Checkout Summary" 
+          @ok="downloadPDF"
+          >
+            <h6>Send Email to:</h6>
+            <b-form-input v-model="text" placeholder="johndoe@email.com"></b-form-input>
             <b-form-checkbox
               id="reciept-box-modal"
               v-model="status"
@@ -114,14 +115,8 @@
               unchecked-value="not_accepted"
             >
               Send Digital Reciept to email
-            </b-form-checkbox> -->
+            </b-form-checkbox>
           </b-modal>
-
-          <b-modal id="checkout-success" scrollable title="Checkout Summary" hide-footer>
-            <h2>THANK YOU FOR BUYING!</h2>
-            <b-button class="mt-3" block id="modal-done" href="#" @click="$bvModal.hide('checkout-success')">Done</b-button>
-          </b-modal>
-          
         </div>
         
       </b-navbar>      
@@ -188,7 +183,6 @@
 <script>
 import firebase from 'firebase/app'
 import "firebase/firestore"
-import "firebase/storage"
 
 
 
@@ -198,8 +192,8 @@ export default {
   },
 
   mounted(){
+    
       firebase.auth().onAuthStateChanged(user => {
-
         if (user) {
           this.users = user.email
            firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
@@ -207,26 +201,6 @@ export default {
                 this.user = [...this.user, docs.data()]
                 this.avatar = docs.data().Image
                 this.id = docs.id;
-
-                    let arr1 = [];
-                    let arr2 = [];
-
-                    this.user[0].Cart.forEach(item => {
-                    arr1.push(item);
-                    })
-
-                    this.user[0].Paid.forEach(item => {
-                    arr2.push(item);
-                    })
-
-                  for(let i = 0; i < arr2.length; i++){
-                    for(let j = 0; j < arr1.length; j++){
-                      if(arr2[i].localeCompare(arr1[j]) == 0){
-                        this.removeCart(arr1[j]);
-                      }
-                    }
-                  }
-
 
                    this.user[0].Cart.forEach(item => {
                     firebase.firestore()
@@ -242,12 +216,13 @@ export default {
               
                     })
 
-                    
           
               })
            })
         }
       })
+    
+       
   },
 
   methods: {
@@ -267,14 +242,9 @@ export default {
         });
     },
 
-    validation: function(){
-      let arrCart = this.cart;
-      let arrPaid = this.paid;
-      
-      console.log(arrCart);
-      for(let i = 0; i <= arrCart.length; i++){
-        //console.log(arrCart[i]);
-      }
+    itemCart: function (){
+      let cartItems = this.userData.Cart;
+      console.log(cartItems);
     },
 
     viewDetails(title,image,author,ratings,price,synopsis,genre){
@@ -288,34 +258,24 @@ export default {
     },
 
     checkBox: function(){
-
-      let val = this.checkTitles;
-      let arr = this.items;
-      let titles = [];
-      let arrPrice = this.checkPrice;
-      let temp = [];
-      let tempPrice = [];
-      let arrPrices = [];
+      let price = 0;
       let total = 0;
+      let arr = this.checkPrice;
+      let char1 = "";
+      let char2 = "";
+      //this.checkPrice = price + this.checkPrice;
+      //console.log(this.checkPrice);
+      // console.log(this.checkPrice);
+      //console.log(price);
 
       for(let i = 0; i < arr.length; i++){
-        temp = arr[i].Title;
-        tempPrice = arr[i].Price
-        titles.push(temp);
-        arrPrices.push(tempPrice);
+        // price = price + parseInt(arr[i]);
+        price = parseInt(arr[i]);
+        total = total + price;
+
       }
-      temp = [];
-      for(let i =  0; i < val.length; i++){
-        let title = val[i];
-        for(let j = 0; j < titles.length; j++){
-          if(val[i].includes(titles[j])){
-            temp.push(val[i]);
-            total = total + parseInt(arrPrices[j]);
-          }
-        }
-      }
-      this.checkOutTitles = temp;
       this.checkOutPrice = total;
+
     },
 
     displaySearch: function() {
@@ -342,70 +302,11 @@ export default {
           
         }
       }
-
       if(result == ''){
         console.log('No Result Found');
         alert('No Result Found')
       }
     },
-
-
-    downloadPDF (bvModalEvent){
-      // Get a reference to the storage service, which is used to create references in your storage bucket
-      var storage = firebase.storage();
-
-      // Create a storage reference from our storage service
-      var storageRef = storage.ref();
-      for(let i = 0; i < this.checkOutTitles.length; i++){
-      let temp = this.checkOutTitles[i];
-      this.removeCart(temp);
-      this.updatePaid(temp);
-      var url = storageRef.child('PDF/' + this.checkOutTitles[i] + '.pdf').getDownloadURL().then(function(url) {
-
-      // `url` is the download URL for 'images/stars.jpg'
-
-      // This can be downloaded directly:
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.onload = function(event) {
-        var blob = xhr.response;
-      };
-      xhr.open('GET', url);
-      xhr.send();
-
-
-      console.log(url);
-    }).catch(function(error) {
-      console.log('error');
-
-  //     switch (error.code) {
-  //   case 'storage/object-not-found':
-  //     alert("not found");
-  //     break;
-
-  //   case 'storage/unauthorized':
-  //     alert("dont have permission");
-  //     break;
-
-  //   case 'storage/canceled':
-  //     alert("canceled");
-  //     break;
-
-  //   case 'storage/unknown':
-  //     alert("unknown");
-  //     break;
-  // }
-    });
-      }
-      this.checkOutPrice = 0;
-      this.$bvModal.show('checkout-success');
-      this.$bvModal.hide('checkout-modal');
-      
-      
-      
-    },
-
-
 
     removeCart(title){
      
@@ -420,22 +321,15 @@ export default {
           console.error("Error updating document: ", error);
       });
       
-    },
-
-    updatePaid(title){
-      var bookTitle = title;
-
-      firebase.firestore().collection("User").doc(this.id).update({
-        Paid: firebase.firestore.FieldValue.arrayUnion(bookTitle)
-      }).then(function() {
-      console.log("Document successfully updated!");
-      })
-      .catch(function(error) {
-          console.error("Error updating document: ", error);
-      });
     }
-
     },
+
+    downloadPDF (e){
+      e.preventDefault();
+      console.log("Bruh");
+    },
+
+    
 
     data(){
       return {
@@ -463,13 +357,7 @@ export default {
         genre:"",
 
         checkPrice: [],
-        checkTitles: [],
-        checkOutTitles: [],
         checkOutPrice: 0,
-        testURL: "",
-        paid: [],
-        cart: [],
-
       }
     },
 }

@@ -130,6 +130,7 @@ export default {
               Image: 'Not Uploaded',
               Contact: 'Please Enter Contact Number',
               Cart:[],
+              Paid:[],
               Status:"Active",
               SocialMedia:[]
           })
