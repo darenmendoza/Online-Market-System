@@ -32,7 +32,8 @@
       <b-row  class="text-center">
         <b-col >
           <div class="y-auto">
-            <div class="container">
+            <ShowAll />
+            <div class="container" v-if="false">
               <b-card-group column>
                 <div>
                 <h2>Best Selling Ebook</h2>
@@ -53,7 +54,9 @@
                 </b-card-group>
                 </div>
                 <div>
+
                 <h2>Popular Ebooks</h2>
+
                 <b-card-group deck class="container">
                   <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.popular">
                       <b-card-text>
@@ -88,13 +91,15 @@
                     </b-card>
                 </b-card-group>
                 </div>
+                
                   <div>
                       <b-sidebar id="sidebar-right" :title="title" img-top right shadow>
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
                           <div>
                           <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
-                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
                           </div>
                           <p class="text-left">
                             <ul>
@@ -118,6 +123,7 @@
           </div>
         </b-col>
       </b-row>
+      
     </b-container>
 
     <b-container fluid class="page-footer">
@@ -134,6 +140,7 @@
         </b-col>
       </b-row>
     </b-container>
+
     </client-only>
   </article>
 </template>
@@ -143,12 +150,15 @@
 import firebase from 'firebase/app'
 import "firebase/firestore"
 import "firebase/auth"
+import ShowAll from './full'
 
 
 export default {
 
   components: {
+    ShowAll
   },
+  
 
   mounted(){
     
@@ -167,6 +177,12 @@ export default {
               this.user = [...this.user, docs.data()]
                 this.avatar = docs.data().Image
                 this.id = docs.id
+
+
+              
+
+
+
             })
         }).catch(function(error) {
         console.log("Error getting documents: ", error);
@@ -230,9 +246,28 @@ export default {
         this.price = price;
         this.synopsis = synopsis;
         this.genre = genre;
+
+        this.user[0].Paid.forEach(item => {
+                    firebase.firestore()
+                    .collection('items')
+                    .where("Title","==",item)
+                    .get().then(snapshot => {
+                            if(title == item){
+                              this.paid =true;
+                            }
+                            else{
+                              this.paid = false;
+                            }
+                      })
+              
+                    })
+
+
     },
 
     addedToCart: function(){
+      
+
       
       if(this.logged){
         // db.items()
@@ -284,9 +319,19 @@ export default {
         author:"",
         price:"",
         synopsis:"",
-        genre:""
+        genre:"",
+
+        paid:false,
+
+        fullView:false,
        
       }
     },
 }
 </script>
+
+<style scoped>
+.card-group .card {
+    max-width: 25%;
+}
+</style>

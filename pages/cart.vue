@@ -36,7 +36,7 @@
             <b-col md="3">
               <b-card-img :src="books.Image" alt="Image" class="rounded-0"></b-card-img>
               <div> 
-                <b-form-checkbox class="cart-checkbox" size="lg" :value="books.Title" unchecked-value="0" v-model="checkTitles" @change="checkBox"></b-form-checkbox>           
+                <b-form-checkbox class="cart-checkbox" size="lg" :value="books.Title" unchecked-value="null" v-model="checkTitles" @change="checkBox"></b-form-checkbox>           
               </div>
               
             </b-col>
@@ -84,14 +84,14 @@
 
       <b-navbar class="checkout-bar">
         <div>
-          <b-form-checkbox
+          <!-- <b-form-checkbox
                 id="checkbox-select-all"
                 name="checkout-select-all"
                 value="selectall"
                 unchecked-value="not_accepted"
               >
           <h6>Select All </h6>
-          </b-form-checkbox> 
+          </b-form-checkbox>  -->
         </div>
         <div>
           <h6>Book Subtotal (No) item/s: TotalPrice: {{checkOutPrice}}</h6>
@@ -101,7 +101,17 @@
           <b-button v-b-modal.checkout-modal><h4><b-icon icon="bag-check-fill" aria-hidden="true"></b-icon> Checkout</h4></b-button>
           
           <b-modal id="checkout-modal" scrollable title="Checkout Summary" hide-footer>
+            <div v-for="(Titles, index) in checkOutTitles" :key="index">
+              {{Titles}}:       ₱{{indivPrice[index]}}
+            </div>
             <h6>Total: {{checkOutPrice}}</h6>
+            <div v-if="!paymentFlag">
+            <h4>Payment Method</h4>
+            <b-button @click="paymentFlag = true">TBH CREDITS</b-button>
+            <b-button v-b-tooltip.hover title="Undermaintenance sorry :<" disabled>G-CASH</b-button>
+            
+            </div>
+            <h4 v-if="paymentFlag">TBH Credits: {{Credits}}</h4>
             
             <b-button class="mt-3" block @click="downloadPDF">Buy Now</b-button>
             <b-button class="mt-3" block @click="$bvModal.hide('checkout-modal')">Cancel</b-button>
@@ -207,28 +217,9 @@ export default {
                 this.user = [...this.user, docs.data()]
                 this.avatar = docs.data().Image
                 this.id = docs.id;
+                this.Credits = docs.data().Credits;
 
-                    let arr1 = [];
-                    let arr2 = [];
-
-                    this.user[0].Cart.forEach(item => {
-                    arr1.push(item);
-                    })
-
-                    this.user[0].Paid.forEach(item => {
-                    arr2.push(item);
-                    })
-
-                  for(let i = 0; i < arr2.length; i++){
-                    for(let j = 0; j < arr1.length; j++){
-                      if(arr2[i].localeCompare(arr1[j]) == 0){
-                        this.removeCart(arr1[j]);
-                      }
-                    }
-                  }
-
-
-                   this.user[0].Cart.forEach(item => {
+                this.user[0].Cart.forEach(item => {
                     firebase.firestore()
                     .collection('items')
                     .where("Title","==",item)
@@ -287,7 +278,7 @@ export default {
         this.genre = genre;
     },
 
-    checkBox: function(){
+    checkBox(){
 
       let val = this.checkTitles;
       let arr = this.items;
@@ -297,6 +288,7 @@ export default {
       let tempPrice = [];
       let arrPrices = [];
       let total = 0;
+      let tempIndivPrice = [];
 
       for(let i = 0; i < arr.length; i++){
         temp = arr[i].Title;
@@ -309,6 +301,7 @@ export default {
         let title = val[i];
         for(let j = 0; j < titles.length; j++){
           if(val[i].includes(titles[j])){
+            tempIndivPrice.push(arrPrices[j]);
             temp.push(val[i]);
             total = total + parseInt(arrPrices[j]);
           }
@@ -316,6 +309,10 @@ export default {
       }
       this.checkOutTitles = temp;
       this.checkOutPrice = total;
+      this.indivPrice = tempIndivPrice;
+
+      
+      
     },
 
     displaySearch: function() {
@@ -353,30 +350,52 @@ export default {
     downloadPDF (bvModalEvent){
       // Get a reference to the storage service, which is used to create references in your storage bucket
       var storage = firebase.storage();
+      
+
 
       // Create a storage reference from our storage service
       var storageRef = storage.ref();
       for(let i = 0; i < this.checkOutTitles.length; i++){
       let temp = this.checkOutTitles[i];
       this.removeCart(temp);
+      console.log(temp);
       this.updatePaid(temp);
-      var url = storageRef.child('PDF/' + this.checkOutTitles[i] + '.pdf').getDownloadURL().then(function(url) {
+      this.Credits-=this.checkOutPrice;
+      var url = storageRef.child('PDF/' + temp + '.pdf').getDownloadURL().then(function(url) {
 
       // `url` is the download URL for 'images/stars.jpg'
-
+      
       // This can be downloaded directly:
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.onload = function(event) {
-        var blob = xhr.response;
-      };
-      xhr.open('GET', url);
-      xhr.send();
+       let xhr = new XMLHttpRequest();
+       xhr.open('GET', url);
+       xhr.responseType = 'blob';
+       let formData = new FormData(this);
+       xhr.send(formData); 
 
+       xhr.onload = function(e) {
+      // Create a new Blob object using the 
+      //response data of the onload object
+      var blob = new Blob([this.response], {type: 'image/pdf'});
+      //Create a link element, hide it, direct 
+      //it towards the blob, and then 'click' it programatically
+      let a = document.createElement("a");
+      a.style = "display: none";
+      document.body.appendChild(a);
+      //Create a DOMString representing the blob 
+      //and point the link element towards it
+      let urli = window.URL.createObjectURL(blob);
+      a.href = urli;
+      a.download = temp + '.pdf';
+      //programatically click the link to trigger the download
+      a.click();
+      //release the reference to the file by revoking the Object URL
+      window.URL.revokeObjectURL(urli);
+    };
+      
 
-      console.log(url);
+      console.log(temp);
     }).catch(function(error) {
-      console.log('error');
+      console.log(error);
 
   //     switch (error.code) {
   //   case 'storage/object-not-found':
@@ -397,9 +416,22 @@ export default {
   // }
     });
       }
+      this.Credits-=this.checkOutPrice;
+      this.user[0].Credits = this.Credits;
+
+      firebase.firestore().collection("User").doc(this.id).update({
+        Credits: this.Credits
+      }).then(function() {
+      console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+          console.error("Error updating document: ", error);
+      });
+
       this.checkOutPrice = 0;
       this.$bvModal.show('checkout-success');
       this.$bvModal.hide('checkout-modal');
+      
       
       
       
@@ -462,6 +494,8 @@ export default {
         synopsis:"",
         genre:"",
 
+        Credits:0,
+
         checkPrice: [],
         checkTitles: [],
         checkOutTitles: [],
@@ -469,6 +503,10 @@ export default {
         testURL: "",
         paid: [],
         cart: [],
+        checkoutSummary:[],
+        indivPrice:[],
+
+        paymentFlag:false,
 
       }
     },
