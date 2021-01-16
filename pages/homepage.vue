@@ -2,42 +2,40 @@
   <article>
     <client-only>
       <b-navbar toggleable="lg">
-      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
-      </nuxt-link>
+      <b-navbar-brand  tag="b" href="homepage" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
             <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
-            <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
+            <b-button href="cart"><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button>
             <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
             <!-- <input type="text" class="form-control" v-model="findText" /> -->
             <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
           </b-nav-form>
 
-          <b-nav-item-dropdown right v-if="users">
+          <b-nav-item-dropdown right v-if="user">
             <!-- Using 'button-content' slot -->
             <template #button-content>
-              <em><b-avatar :src="avatar">
+              <em><b-avatar src="https://placekitten.com/300/300">
             </b-avatar></em>
             </template>
-            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'">Profile</nuxt-link></b-dropdown-item>
-            <b-dropdown-item><nuxt-link to="/admin" v-if="user == 'thebookhaven20@gmail.com'">Admin Setting</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile">Profile</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
-        <nuxt-link to="/login" v-if="!users"><b-button size="sm" class="my-2 my-sm-0">Log In/Sign Up</b-button></nuxt-link>
+        <nuxt-link to="/" v-if="!user"><b-button size="sm" class="my-2 my-sm-0">Log In/Sign Up</b-button></nuxt-link>
     </b-navbar>
 
     <b-container fluid>
       <b-row  class="text-center">
         <b-col >
           <div class="y-auto">
-            <div class="container" v-if="!fullView">
+            <div class="container">
               <b-card-group column>
                 <div>
                 <h2>Best Selling Ebook</h2>
                 <b-card-group deck class="container">
-                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="index">
+                    <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="(books,index) in items.slice(0,4)" :key="books.best">
                       <b-card-text>
                         {{books.Author}}<br> 
                       <div>
@@ -45,7 +43,7 @@
                       </div> 
                       <p>{{books.Price}}</p>
                       </b-card-text>
-                      <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                      <b-button v-b-toggle.sidebar-right v-on:click.prevent="viewDetails" type="submit">View Details</b-button>
                       <template #footer>
                         <small class="text-muted"> (0) downloaded</small>
                       </template> 
@@ -53,9 +51,7 @@
                 </b-card-group>
                 </div>
                 <div>
-
                 <h2>Popular Ebooks</h2>
-
                 <b-card-group deck class="container">
                   <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in items.slice(0,4)" :key="books.popular">
                       <b-card-text>
@@ -65,7 +61,7 @@
                       </div> 
                       <p>{{books.Price}}</p>
                       </b-card-text>
-                      <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
                       <template #footer>
                         <small class="text-muted"> (0) downloaded</small>
                       </template> 
@@ -83,32 +79,29 @@
                       </div> 
                       <p>{{books.Price}}</p>
                       </b-card-text>
-                      <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
+                      <b-button v-b-toggle.sidebar-right>View Details</b-button>
                       <template #footer>
                         <small class="text-muted"> (0) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
                 </div>
-                
                   <div>
-                      <b-sidebar id="sidebar-right" :title="title" img-top right shadow>
+                      <b-sidebar id="sidebar-right" :title="title = books.Title" img-top v-for="books in items.slice(0,1)" :key="books.Popular" right shadow>
                         <div class="px-2 py-3">
-                          <b-img :src="img" fluid thumbnail></b-img>
-                          <div>
+                          <b-img src="@/assets/empty-out-the-negative-1.jpg" fluid thumbnail></b-img>
                           <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
-                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
-                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
-                          </div>
+                          <b-button v-on:click.prevent="addedToCart"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
+                          
                           <p class="text-left">
                             <ul>
-                              <li>{{author}}</li>
-                              <li>{{synopsis}}</li>
-                              <li>{{genre}}</li>
-                              <li>Price: Php {{price}}</li>
+                              <li>{{books.Author}}</li>
+                              <li>{{books.Synopsis}}</li>
+                              <li>{{books.Genre}}</li>
+                              <li>Price: Php {{books.Price}}</li>
                             </ul>
                           </p>
-                           <b-form-rating variant="warning" id="rating-inline" inline :value="ratings" readonly></b-form-rating>
+                           <b-form-rating variant="warning" id="rating-inline" inline value="3"></b-form-rating>
                           <p>Rate this book?</p>                         
                           
                         </div>
@@ -117,14 +110,11 @@
                
 
               </b-card-group>
-              <b-button @click="fullView = true">Show All</b-button>
             </div>
             
-            <ShowAll v-if="fullView"/>
           </div>
         </b-col>
       </b-row>
-      
     </b-container>
 
     <b-container fluid class="page-footer">
@@ -141,7 +131,6 @@
         </b-col>
       </b-row>
     </b-container>
-
     </client-only>
   </article>
 </template>
@@ -151,15 +140,12 @@
 import firebase from 'firebase/app'
 import "firebase/firestore"
 import "firebase/auth"
-import ShowAll from './full'
 
 
 export default {
 
   components: {
-    ShowAll
   },
-  
 
   mounted(){
     
@@ -171,21 +157,24 @@ export default {
 
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          this.logged = true
-          this.users = user.email;
-           firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
-            snapshot.docs.forEach(docs => {
-              this.user = [...this.user, docs.data()]
-                this.avatar = docs.data().Image
-                this.id = docs.id
+          this.user = user;
+        }
+      });
 
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+
+          firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                this.items = [...this.items, docs.data()]
+                this.id = docs.id
             })
         }).catch(function(error) {
         console.log("Error getting documents: ", error);
     });
+          
         }
       });
-
     
        
   },
@@ -194,14 +183,13 @@ export default {
       linkGen(pageNum) {
         return pageNum === 1 ? '?' : `?page=${pageNum}`
       },
-
        signout() {
       firebase
         .auth()
         .signOut()
         .then(user => {
           console.log(user);
-          this.$router.push("/login");
+          this.$router.push("/");
         })
         .catch(function(error) {
           console.log(error);
@@ -235,58 +223,26 @@ export default {
       }
     },
 
-    viewDetails(title,image,author,ratings,price,synopsis,genre){
-        this.title = title;
-        this.img = image;
-        this.author = author;
-        this.ratings = ratings;
-        this.price = price;
-        this.synopsis = synopsis;
-        this.genre = genre;
-
-        if(this.logged){
-        this.user[0].Paid.forEach(item => {
-                    firebase.firestore()
-                    .collection('items')
-                    .where("Title","==",item)
-                    .get().then(snapshot => {
-                            if(title == item){
-                              this.paid =true;
-                            }
-                            else{
-                              this.paid = false;
-                            }
-                      })
-              
-                    })
-        }
-
-
+    viewDetails: function(){
+      //alert(index);
     },
 
     addedToCart: function(){
+      // db.items()
+      var bookTitle = this.title;
+      //alert(bookTitle);
+      alert("Added To Cart \n" + bookTitle);
       
-
-      
-      if(this.logged){
-        // db.items()
-        var bookTitle = this.title;
-
-        firebase.firestore().collection("User").doc(this.id).update({
-          Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
-        }).then(function() {
-        alert(bookTitle + " is added to cart");
-        console.log("Document successfully updated!");
-        })
-        .catch(function(error) {
-            console.error("Error updating document: ", error);
-        });
-      } else {
-        this.$router.push('/login')
-      }
-
-      
+      firebase.firestore().collection("User").doc(this.id).update({
+        Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
+      }).then(function() {
+      console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+          console.error("Error updating document: ", error);
+      });
     }
+    
 
     },
 
@@ -298,31 +254,17 @@ export default {
     // },
 
     
-    data(){
+
+     data(){
       return {
         value:"",
-        users:"",
+        user:"",
         findText:"",
-        avatar:"",
         count: 0,
         index: 0,
-        id:"",
-        logged:false,
+        title: "",
 
-        items:[],
-        user:[],
-
-        title:"",
-        img:"",
-        ratings:"",
-        author:"",
-        price:"",
-        synopsis:"",
-        genre:"",
-
-        paid:false,
-
-        fullView:false,
+        items:[]
        
       }
     },
