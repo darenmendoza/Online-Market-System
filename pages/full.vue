@@ -83,6 +83,7 @@ export default {
   methods:{
 
       viewDetails(title,image,author,ratings,price,synopsis,genre){
+         this.paid = false;
         this.title = title;
         this.img = image;
         this.author = author;
@@ -91,20 +92,21 @@ export default {
         this.synopsis = synopsis;
         this.genre = genre;
 
+        if(this.logged){
         this.user[0].Paid.forEach(item => {
                     firebase.firestore()
                     .collection('items')
                     .where("Title","==",item)
                     .get().then(snapshot => {
                             if(title == item){
-                              this.paid =true;
+                              this.paid =true
+                              
                             }
-                            else{
-                              this.paid = false;
-                            }
+                    
                       })
               
                     })
+        }
 
 
     },
@@ -148,6 +150,7 @@ export default {
       synopsis:"",
       genre:"",
       user:[],
+      paid:false
     }
   },
   computed: {
