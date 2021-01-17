@@ -132,7 +132,8 @@ export default {
               Cart:[],
               Paid:[],
               Status:"Active",
-              SocialMedia:[]
+              SocialMedia:[],
+              Credits:5000
           })
           .then(function(docRef) {
               console.log("Document written with ID: ", docRef.id);
@@ -141,13 +142,15 @@ export default {
               console.error("Error adding document: ", error);
           });
 
-          alert("Thank you for signing up");
+          
           console.log(user);
           firebase
             .auth()
             .currentUser.sendEmailVerification()
             .then((user) => {
+              alert("Thank you for signing up");
               alert("Verification Email Sent");
+              this.$router.push('/')
             })
             .catch((error) => {
               console.log(error);

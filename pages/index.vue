@@ -2,7 +2,7 @@
   <article>
     <client-only>
       <b-navbar toggleable="lg">
-      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
+      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text" @click="fullView = false"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
       </nuxt-link>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
@@ -20,7 +20,7 @@
               <em><b-avatar :src="avatar">
             </b-avatar></em>
             </template>
-            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'" style="text-decoration:none; color:black;">Profile</nuxt-link></b-dropdown-item>
             <b-dropdown-item><nuxt-link to="/admin" v-if="user == 'thebookhaven20@gmail.com'">Admin Setting</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
@@ -98,7 +98,7 @@
                           <div>
                           <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
-                          <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
+                          <b-button v-b-toggle.sidebar-right v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
                           </div>
                           <p class="text-left">
                             <ul>
@@ -236,6 +236,7 @@ export default {
     },
 
     viewDetails(title,image,author,ratings,price,synopsis,genre){
+      this.paid = false;
         this.title = title;
         this.img = image;
         this.author = author;
@@ -251,11 +252,10 @@ export default {
                     .where("Title","==",item)
                     .get().then(snapshot => {
                             if(title == item){
-                              this.paid =true;
+                              this.paid =true
+                              
                             }
-                            else{
-                              this.paid = false;
-                            }
+                    
                       })
               
                     })

@@ -19,7 +19,7 @@
               <em><b-avatar :src="avatar">
             </b-avatar></em>
             </template>
-            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'">Profile</nuxt-link></b-dropdown-item>
+            <b-dropdown-item><nuxt-link to="/edit-profile" v-if="user != 'thebookhaven20@gmail.com'" style="text-decoration:none; color:black;">Profile</nuxt-link></b-dropdown-item>
             <b-dropdown-item><nuxt-link to="/admin" v-if="user == 'thebookhaven20@gmail.com'">Admin Setting</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
@@ -98,7 +98,7 @@
         </div>
 
         <div>
-          <b-button v-b-modal.checkout-modal><h4><b-icon icon="bag-check-fill" aria-hidden="true"></b-icon> Checkout</h4></b-button>
+          <b-button v-b-modal.checkout-modal v-if="checkOutPrice != 0"><h4><b-icon icon="bag-check-fill" aria-hidden="true"></b-icon> Checkout</h4></b-button>
           
           <b-modal id="checkout-modal" scrollable title="Checkout Summary" hide-footer>
             <div v-for="(Titles, index) in checkOutTitles" :key="index">
@@ -113,7 +113,7 @@
             </div>
             <h4 v-if="paymentFlag">TBH Credits: {{Credits}}</h4>
             
-            <b-button class="mt-3" block @click="downloadPDF">Buy Now</b-button>
+            <b-button class="mt-3" block @click="downloadPDF" v-if="paymentFlag">Buy Now</b-button>
             <b-button class="mt-3" block @click="$bvModal.hide('checkout-modal')">Cancel</b-button>
             <!-- <b-form-input v-model="text" placeholder="johndoe@email.com"></b-form-input>
             <b-form-checkbox
@@ -310,6 +310,7 @@ export default {
       this.checkOutTitles = temp;
       this.checkOutPrice = total;
       this.indivPrice = tempIndivPrice;
+      this.paymentFlag = false
 
       
       
@@ -348,10 +349,14 @@ export default {
 
 
     downloadPDF (bvModalEvent){
+      
+      if(this.checkOutPrice > this.Credits){
+        Alert("insufficient Balance!")
+        this.$router.push('/')
+      }else{
+      
       // Get a reference to the storage service, which is used to create references in your storage bucket
       var storage = firebase.storage();
-      
-
 
       // Create a storage reference from our storage service
       var storageRef = storage.ref();
@@ -433,7 +438,7 @@ export default {
       this.$bvModal.hide('checkout-modal');
       
       
-      
+      }
       
     },
 
