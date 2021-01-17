@@ -32,8 +32,7 @@
       <b-row  class="text-center">
         <b-col >
           <div class="y-auto">
-            <ShowAll />
-            <div class="container" v-if="false">
+            <div class="container" v-if="!fullView">
               <b-card-group column>
                 <div>
                 <h2>Best Selling Ebook</h2>
@@ -118,8 +117,10 @@
                
 
               </b-card-group>
+              <b-button @click="fullView = true">Show All</b-button>
             </div>
             
+            <ShowAll v-if="fullView"/>
           </div>
         </b-col>
       </b-row>
@@ -178,11 +179,6 @@ export default {
                 this.avatar = docs.data().Image
                 this.id = docs.id
 
-
-              
-
-
-
             })
         }).catch(function(error) {
         console.log("Error getting documents: ", error);
@@ -198,13 +194,14 @@ export default {
       linkGen(pageNum) {
         return pageNum === 1 ? '?' : `?page=${pageNum}`
       },
+
        signout() {
       firebase
         .auth()
         .signOut()
         .then(user => {
           console.log(user);
-          this.$router.push("/");
+          this.$router.push("/login");
         })
         .catch(function(error) {
           console.log(error);
@@ -247,6 +244,7 @@ export default {
         this.synopsis = synopsis;
         this.genre = genre;
 
+        if(this.logged){
         this.user[0].Paid.forEach(item => {
                     firebase.firestore()
                     .collection('items')
@@ -261,6 +259,7 @@ export default {
                       })
               
                     })
+        }
 
 
     },
@@ -329,9 +328,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-.card-group .card {
-    max-width: 25%;
-}
-</style>

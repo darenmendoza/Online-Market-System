@@ -50,6 +50,10 @@ import "firebase/firestore"
 import "firebase/auth"
 
 export default {
+
+  components:{
+
+  },
   mounted(){
     
     firebase.firestore().collection('items').get().then(snapshot => {
@@ -57,13 +61,93 @@ export default {
                 this.clubs = [...this.clubs, docs.data()]
             })
         })
+
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.logged = true
+          this.users = user.email;
+           firebase.firestore().collection('User').where("Email","==",user.email).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+              this.user = [...this.user, docs.data()]
+                this.id = docs.id
+
+            })
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+        }
+      });
        
+  },
+
+  methods:{
+
+      viewDetails(title,image,author,ratings,price,synopsis,genre){
+        this.title = title;
+        this.img = image;
+        this.author = author;
+        this.ratings = ratings;
+        this.price = price;
+        this.synopsis = synopsis;
+        this.genre = genre;
+
+        this.user[0].Paid.forEach(item => {
+                    firebase.firestore()
+                    .collection('items')
+                    .where("Title","==",item)
+                    .get().then(snapshot => {
+                            if(title == item){
+                              this.paid =true;
+                            }
+                            else{
+                              this.paid = false;
+                            }
+                      })
+              
+                    })
+
+
+    },
+
+    addedToCart(){
+      
+      if(this.logged){
+        // db.items()
+        var bookTitle = this.title;
+
+        firebase.firestore().collection("User").doc(this.id).update({
+          Cart: firebase.firestore.FieldValue.arrayUnion(bookTitle)
+        }).then(function() {
+        alert(bookTitle + " is added to cart");
+        console.log("Document successfully updated!");
+        })
+        .catch(function(error) {
+            console.error("Error updating document: ", error);
+        });
+      } else {
+        this.$router.push('/login')
+      }
+
+    },
+
+    
+
+    
   },
 
   data: function () {
     return {
-      items:[],
-       clubs: []
+      clubs: [],
+      id:"",
+      logged:false,
+      title:"",
+      img:"",
+      ratings:"",
+      author:"",
+      price:"",
+      synopsis:"",
+      genre:"",
+      user:[],
     }
   },
   computed: {

@@ -95,10 +95,27 @@
           <div>
             <h4>Social Media Links <!--<b-button v-b-toggle.collapse-soc><b-icon icon="pencil" aria-hidden="true"></b-icon></b-button>!--></h4> 
           </div>
-
-           <div v-for="(sns,index) in user.SocialMedia" :key="index">
-              <b-link :href="sns">{{sns}}</b-link>
-            </div>
+          <div style="display: flex">
+          <b-form-input
+                    id="input-1"
+                    type="text"
+                    placeholder="Add Social Media Account"
+                    v-model="sns"
+                    required
+                  >
+                  </b-form-input>
+              <b-button @click="addSns" style="margin-left:1rem; margin-top:-.1rem"><b-icon icon="check2" aria-hidden="true"></b-icon></b-button>
+          </div>
+              <table style="width:100%">
+                      <tr>
+                      <th>Social Media</th>
+                      
+                      </tr>
+                      <tr v-for="(snsi,index) in user.SocialMedia" :key="index" class="displayList">
+                      <td><b-link :href="snsi">{{snsi}}</b-link></td>
+                      
+                      </tr>
+                </table>
            <!--
             <b-collapse id="collapse-soc" class="mt-2">
               <b-form-group
@@ -150,11 +167,6 @@ export default {
 
   components: {
   },
-
-  computed: {
-      
-        
-    },
     
   mounted(){
 
@@ -256,6 +268,21 @@ export default {
       });
     },
 
+    addSns(){
+      
+      this.items[0].SocialMedia = [...this.items[0].SocialMedia, this.sns]
+      console.log(this.items[0])
+      firebase.firestore().collection("User").doc(this.id).update({
+         SocialMedia : firebase.firestore.FieldValue.arrayUnion(this.sns)
+        }).then(function() {
+          
+        console.log("Document successfully updated!");
+        })
+        .catch(function(error) {
+            console.error("Error updating document: ", error);
+        });
+    },
+
     uploadFile(){
 
       let file = this.file1
@@ -289,6 +316,8 @@ export default {
       this.modalShow = false;
       
     },
+
+     
   
 
     },
@@ -308,6 +337,8 @@ export default {
         image:"",
         socmed:"",
         id:"",
+
+        sns:"",
 
         file1: null,
 
