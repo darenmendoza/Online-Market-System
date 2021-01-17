@@ -351,7 +351,7 @@ export default {
     downloadPDF (bvModalEvent){
       
       if(this.checkOutPrice > this.Credits){
-        Alert("insufficient Balance!")
+        alert("Insufficient Balance!")
         this.$router.push('/')
       }else{
       
