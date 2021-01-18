@@ -6,13 +6,6 @@
       </nuxt-link>
       <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
-          <b-nav-form>
-            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
-            <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
-            <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
-            <!-- <input type="text" class="form-control" v-model="findText" /> -->
-            <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
-          </b-nav-form>
 
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
@@ -20,6 +13,7 @@
               <em><b-avatar :src="avatar">
             </b-avatar></em>
             </template>
+            <b-dropdown-item><nuxt-link to="/cart" style='text-decoration:none; color:black;'>Cart</nuxt-link></b-dropdown-item>
             <b-dropdown-item v-on:click="signout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -90,6 +84,10 @@
           <div>
              <h4>{{user.Email}} </h4>
           </div>
+
+          <div>
+             <h4>TBH Credits: ₱ {{user.Credits}} </h4>
+          </div>
           
 
           <div>
@@ -140,15 +138,11 @@
 
     <b-container fluid class="page-footer">
       <b-row>
-        <b-col class="text-center"><h4>The Book Haven</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos corporis, cumque nostrum accusamus, mollitia excepturi, non incidunt iure explicabo totam temporibus perspiciatis qui? Non nostrum sequi rerum accusantium delectus optio.</p>
+         <b-col class="text-center"><h4>The Book Haven</h4>
+        <p>Hello, we at The Book Haven offers you new and exicting e-books and pdf for just the right price. Shop and read with us day and night to feel that experience within our books. We hope you have a great experience here at The Book Haven. Thank you!</p>
         </b-col>
-        <b-col class="text-center"><h4>Payment</h4>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque ratione earum voluptate quae sint suscipit sapiente. Sapiente, porro distinctio ducimus consequuntur nulla, nihil numquam quo modi ratione, quas at?
-        </p>
-        </b-col>
-        <b-col class="text-center"><h4>Customer Service</h4>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum repellat officia ipsa incidunt nam vitae adipisci dolores hic dolorum officiis voluptatem tenetur asperiores neque, necessitatibus facilis deleniti quo odio ab.</p>
+        <b-col class="text-center"><h4>#TeamKetchup</h4>
+        <p>#TeamKetchup is a 5 man team of inspiring and passionate developers. We at The Book Haven would like to thank them for helping us build this wonderful website with full of dedication and passion. THANK YOU KETCHUP!</p>
         </b-col>
       </b-row>
     </b-container>

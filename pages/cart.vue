@@ -6,12 +6,6 @@
       </nuxt-link>
       <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
-          <b-nav-form>
-            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
-            <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
-            <!-- <input type="text" class="form-control" v-model="findText" /> -->
-            <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
-          </b-nav-form>
 
           <b-nav-item-dropdown right v-if="users">
             <!-- Using 'button-content' slot -->
@@ -50,7 +44,7 @@
                   Genre: {{books.Genre}}
                 </b-card-text>
                 <b-card-text>
-                  <h5>Price: Php {{books.Price}}</h5>
+                  <h5>Price: ₱ {{books.Price}}</h5>
                 </b-card-text>
                   <br>
                   <br>
@@ -71,7 +65,7 @@
                               <li>{{author}}</li>
                               <li>{{synopsis}}</li>
                               <li>{{genre}}</li>
-                              <li>Price: Php {{price}}</li>
+                              <li>Price: ₱{{price}}</li>
                             </ul>
                           </p>
                            <b-form-rating variant="warning" id="rating-inline" inline :value="ratings" readonly></b-form-rating>
@@ -178,15 +172,11 @@
 
     <b-container fluid class="page-footer">
       <b-row>
-        <b-col class="text-center"><h4>The Book Haven</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos corporis, cumque nostrum accusamus, mollitia excepturi, non incidunt iure explicabo totam temporibus perspiciatis qui? Non nostrum sequi rerum accusantium delectus optio.</p>
+         <b-col class="text-center"><h4>The Book Haven</h4>
+        <p>Hello, we at The Book Haven offers you new and exicting e-books and pdf for just the right price. Shop and read with us day and night to feel that experience within our books. We hope you have a great experience here at The Book Haven. Thank you!</p>
         </b-col>
-        <b-col class="text-center"><h4>Payment</h4>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque ratione earum voluptate quae sint suscipit sapiente. Sapiente, porro distinctio ducimus consequuntur nulla, nihil numquam quo modi ratione, quas at?
-        </p>
-        </b-col>
-        <b-col class="text-center"><h4>Customer Service</h4>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum repellat officia ipsa incidunt nam vitae adipisci dolores hic dolorum officiis voluptatem tenetur asperiores neque, necessitatibus facilis deleniti quo odio ab.</p>
+        <b-col class="text-center"><h4>#TeamKetchup</h4>
+        <p>#TeamKetchup is a 5 man team of inspiring and passionate developers. We at The Book Haven would like to thank them for helping us build this wonderful website with full of dedication and passion. THANK YOU KETCHUP!</p>
         </b-col>
       </b-row>
     </b-container>
@@ -396,9 +386,29 @@ export default {
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(urli);
     };
-      
 
-      console.log(temp);
+   
+
+    firebase.firestore().collection('items').where("Title","==", temp).get().then(snapshot => {
+            snapshot.docs.forEach(docs => {
+                
+
+                firebase.firestore().collection("items").doc(docs.id).update({
+                    Downloads: firebase.firestore.FieldValue.increment(1)
+                  }).then(function() {
+                  console.log("Document successfully updated!");
+                  })
+                  .catch(function(error) {
+                      console.error("Error updating document: ", error);
+                  });
+
+
+            })
+        }).catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+    
+      
     }).catch(function(error) {
       console.log(error);
 

@@ -2,12 +2,12 @@
   <article>
     <client-only>
       <b-navbar toggleable="lg">
-      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text" @click="fullView = false"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
+      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text" @click="fullView = false, searchBar = false"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
       </nuxt-link>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
-            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
+            
             <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
             <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
             <!-- <input type="text" class="form-control" v-model="findText" /> -->
@@ -32,7 +32,8 @@
       <b-row  class="text-center">
         <b-col >
           <div class="y-auto">
-            <div class="container" v-if="!fullView">
+            <div v-if="!searchBar">
+            <div class="container" v-if="fullView == false">
               <b-card-group column>
                 <div>
                 <h2>Best Selling Ebook</h2>
@@ -43,11 +44,11 @@
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>{{books.Price}}</p>
+                      <p>₱{{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
-                        <small class="text-muted"> (0) downloaded</small>
+                        <small class="text-muted"> ({{books.Downloads}}) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
@@ -63,11 +64,11 @@
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>{{books.Price}}</p>
+                      <p>₱{{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
-                        <small class="text-muted"> (0) downloaded</small>
+                        <small class="text-muted"> ({{books.Downloads}}) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
@@ -81,11 +82,11 @@
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>{{books.Price}}</p>
+                      <p>₱{{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
-                        <small class="text-muted"> (0) downloaded</small>
+                        <small class="text-muted"> ({{books.Downloads}}) downloaded) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
@@ -96,7 +97,6 @@
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
                           <div>
-                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
                           <b-button v-b-toggle.sidebar-right v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
                           </div>
@@ -105,7 +105,7 @@
                               <li>{{author}}</li>
                               <li>{{synopsis}}</li>
                               <li>{{genre}}</li>
-                              <li>Price: Php {{price}}</li>
+                              <li>Price: ₱{{price}}</li>
                             </ul>
                           </p>
                            <b-form-rating variant="warning" id="rating-inline" inline :value="ratings" readonly></b-form-rating>
@@ -120,7 +120,9 @@
               <b-button @click="fullView = true">Show All</b-button>
             </div>
             
-            <ShowAll v-if="fullView"/>
+            <ShowAll v-if="fullView" v-bind:all="items"/>
+            </div>
+            <Search v-bind:search="searched" v-if="searchBar" :key="build"/>
           </div>
         </b-col>
       </b-row>
@@ -130,15 +132,12 @@
     <b-container fluid class="page-footer">
       <b-row>
         <b-col class="text-center"><h4>The Book Haven</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos corporis, cumque nostrum accusamus, mollitia excepturi, non incidunt iure explicabo totam temporibus perspiciatis qui? Non nostrum sequi rerum accusantium delectus optio.</p>
+        <p>Hello, we at The Book Haven offers you new and exicting e-books and pdf for just the right price. Shop and read with us day and night to feel that experience within our books. We hope you have a great experience here at The Book Haven. Thank you!</p>
         </b-col>
-        <b-col class="text-center"><h4>Payment</h4>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque ratione earum voluptate quae sint suscipit sapiente. Sapiente, porro distinctio ducimus consequuntur nulla, nihil numquam quo modi ratione, quas at?
-        </p>
+        <b-col class="text-center"><h4>#TeamKetchup</h4>
+        <p>#TeamKetchup is a 5 man team of inspiring and passionate developers. We at The Book Haven would like to thank them for helping us build this wonderful website with full of dedication and passion. THANK YOU KETCHUP!</p>
         </b-col>
-        <b-col class="text-center"><h4>Customer Service</h4>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum repellat officia ipsa incidunt nam vitae adipisci dolores hic dolorum officiis voluptatem tenetur asperiores neque, necessitatibus facilis deleniti quo odio ab.</p>
-        </b-col>
+        
       </b-row>
     </b-container>
 
@@ -152,12 +151,14 @@ import firebase from 'firebase/app'
 import "firebase/firestore"
 import "firebase/auth"
 import ShowAll from './full'
+import Search from './search'
 
 
 export default {
 
   components: {
-    ShowAll
+    ShowAll,
+    Search
   },
   
 
@@ -209,11 +210,17 @@ export default {
     },
 
     displaySearch: function() {
+      if(this.findText == ''){
+            alert("Please Input a Keyword");
+      }
+      else{
+      this.searched = [];
       let val = this.findText;
       let arr = this.items;
       let arrayTitle = [];
       let result = [];
       let temp = '';
+      let notF = false;
       let arrayTemp = [];
       console.log(`You've searched for: ${val}`);
       val = val.toLowerCase();
@@ -227,12 +234,21 @@ export default {
       for(let i = 0; i < arrayTemp.length; i++){
         if(arrayTemp[i].includes(val)){
           result = arrayTitle[i];
-          alert(result);
+          if(this.items[i].Title == result)
+          {
+            notF = true;
+            this.build+=1;
+            this.searched.push(this.items[i])
+            this.searchBar = true;
+          }
         }
       }
-      if(result == ''){
-        alert('No Result Found');
+      if(!notF){
+        alert("No result Found")
       }
+      
+      }
+
     },
 
     viewDetails(title,image,author,ratings,price,synopsis,genre){
@@ -323,6 +339,10 @@ export default {
         paid:false,
 
         fullView:false,
+
+        searched:[],
+        searchBar:false,
+        build:0,
        
       }
     },
