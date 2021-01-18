@@ -2,7 +2,7 @@
   <article>
     <client-only>
       <b-navbar toggleable="lg">
-      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text" @click="fullView = false"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
+      <nuxt-link to="/"><b-navbar-brand  tag="b" class="text" @click="fullView = false, searchBar = false"><img src='@/assets/tbh.png' height="50px" class="d-inline-block align-center " alt="tbh" > The Book Haven </b-navbar-brand>
       </nuxt-link>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
@@ -32,7 +32,8 @@
       <b-row  class="text-center">
         <b-col >
           <div class="y-auto">
-            <div class="container" v-if="!fullView">
+            <div v-if="!searchBar">
+            <div class="container" v-if="fullView == false">
               <b-card-group column>
                 <div>
                 <h2>Best Selling Ebook</h2>
@@ -43,11 +44,11 @@
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>{{books.Price}}</p>
+                      <p>₱{{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
-                        <small class="text-muted"> (0) downloaded</small>
+                        <small class="text-muted"> ({{books.Downloads}}) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
@@ -63,11 +64,11 @@
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>{{books.Price}}</p>
+                      <p>₱{{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
-                        <small class="text-muted"> (0) downloaded</small>
+                        <small class="text-muted"> ({{books.Downloads}}) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
@@ -81,11 +82,11 @@
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>{{books.Price}}</p>
+                      <p>₱{{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
-                        <small class="text-muted"> (0) downloaded</small>
+                        <small class="text-muted"> ({{books.Downloads}}) downloaded) downloaded</small>
                       </template> 
                     </b-card>
                 </b-card-group>
@@ -105,7 +106,7 @@
                               <li>{{author}}</li>
                               <li>{{synopsis}}</li>
                               <li>{{genre}}</li>
-                              <li>Price: Php {{price}}</li>
+                              <li>Price: ₱{{price}}</li>
                             </ul>
                           </p>
                            <b-form-rating variant="warning" id="rating-inline" inline :value="ratings" readonly></b-form-rating>
@@ -120,7 +121,9 @@
               <b-button @click="fullView = true">Show All</b-button>
             </div>
             
-            <ShowAll v-if="fullView"/>
+            <ShowAll v-if="fullView" v-bind:all="items"/>
+            </div>
+            <Search v-bind:search="searched" v-if="searchBar" :key="build"/>
           </div>
         </b-col>
       </b-row>
@@ -152,12 +155,14 @@ import firebase from 'firebase/app'
 import "firebase/firestore"
 import "firebase/auth"
 import ShowAll from './full'
+import Search from './search'
 
 
 export default {
 
   components: {
-    ShowAll
+    ShowAll,
+    Search
   },
   
 
@@ -209,6 +214,12 @@ export default {
     },
 
     displaySearch: function() {
+      if(this.findText == ''){
+            alert("No Result Found");
+      }
+      else{
+      this.build+=1;
+      this.searched = [];
       let val = this.findText;
       let arr = this.items;
       let arrayTitle = [];
@@ -227,12 +238,16 @@ export default {
       for(let i = 0; i < arrayTemp.length; i++){
         if(arrayTemp[i].includes(val)){
           result = arrayTitle[i];
-          alert(result);
+          if(this.items[i].Title == result)
+          {
+            this.searched.push(this.items[i])
+            this.searchBar = true;
+          }
         }
       }
-      if(result == ''){
-        alert('No Result Found');
+      
       }
+
     },
 
     viewDetails(title,image,author,ratings,price,synopsis,genre){
@@ -323,6 +338,10 @@ export default {
         paid:false,
 
         fullView:false,
+
+        searched:[],
+        searchBar:false,
+        build:0,
        
       }
     },

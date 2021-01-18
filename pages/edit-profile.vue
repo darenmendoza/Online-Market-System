@@ -7,11 +7,9 @@
       <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
-            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
+            
             <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
-            <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
-            <!-- <input type="text" class="form-control" v-model="findText" /> -->
-            <b-button size="sm" class="my-2 my-sm-0" v-on:click.prevent="displaySearch" type="submit">Search</b-button>
+          
           </b-nav-form>
 
           <b-nav-item-dropdown right>
@@ -89,6 +87,10 @@
             </b-collapse>
           <div>
              <h4>{{user.Email}} </h4>
+          </div>
+
+          <div>
+             <h4>TBH Credits: ₱ {{user.Credits}} </h4>
           </div>
           
 

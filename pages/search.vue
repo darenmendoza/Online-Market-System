@@ -1,15 +1,14 @@
 <template>
   <div>
-    
     <h2>All E-Books</h2>
     <b-card-group deck v-for="row in formattedClubs" :key="row.index" style="margin: 2rem">
-        <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in row" :key="books.popular">
+        <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in row" :key="books.popular" style="max-width: 25%;">
                       <b-card-text>
                         {{books.Author}} <br> 
                       <div>
                         <b-form-rating variant="warning" readonly inline :value="books.Ratings"></b-form-rating>
                       </div> 
-                      <p>₱{{books.Price}}</p>
+                      <p>₱ {{books.Price}}</p>
                       </b-card-text>
                       <b-button v-b-toggle.sidebar-right @click.prevent="viewDetails(books.Title,books.Image,books.Author, books.Ratings, books.Price, books.Synopsis,books.Genre)">View Details</b-button>
                       <template #footer>
@@ -41,6 +40,8 @@
                       </b-sidebar>
                     </div>
     
+
+    
   </div>
 </template>
 
@@ -51,16 +52,18 @@ import "firebase/auth"
 
 export default {
 
-  props:['all'],
-
+props: ['search'],
   components:{
+      
 
   },
   mounted(){
+
+         
     
+    this.clubs = this.search;
     
-    this.clubs = this.all;
-      
+         
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
           this.logged = true
@@ -76,12 +79,15 @@ export default {
     });
         }
       });
+
+      
        
   },
 
   methods:{
 
       viewDetails(title,image,author,ratings,price,synopsis,genre){
+          console.log(this.clubs)
          this.paid = false;
         this.title = title;
         this.img = image;
