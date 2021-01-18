@@ -172,15 +172,11 @@
 
     <b-container fluid class="page-footer">
       <b-row>
-        <b-col class="text-center"><h4>The Book Haven</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos corporis, cumque nostrum accusamus, mollitia excepturi, non incidunt iure explicabo totam temporibus perspiciatis qui? Non nostrum sequi rerum accusantium delectus optio.</p>
+         <b-col class="text-center"><h4>The Book Haven</h4>
+        <p>Hello, we at The Book Haven offers you new and exicting e-books and pdf for just the right price. Shop and read with us day and night to feel that experience within our books. We hope you have a great experience here at The Book Haven. Thank you!</p>
         </b-col>
-        <b-col class="text-center"><h4>Payment</h4>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque ratione earum voluptate quae sint suscipit sapiente. Sapiente, porro distinctio ducimus consequuntur nulla, nihil numquam quo modi ratione, quas at?
-        </p>
-        </b-col>
-        <b-col class="text-center"><h4>Customer Service</h4>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum repellat officia ipsa incidunt nam vitae adipisci dolores hic dolorum officiis voluptatem tenetur asperiores neque, necessitatibus facilis deleniti quo odio ab.</p>
+        <b-col class="text-center"><h4>#TeamKetchup</h4>
+        <p>#TeamKetchup is a 5 man team of inspiring and passionate developers. We at The Book Haven would like to thank them for helping us build this wonderful website with full of dedication and passion. THANK YOU KETCHUP!</p>
         </b-col>
       </b-row>
     </b-container>

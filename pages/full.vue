@@ -22,7 +22,6 @@
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
                           <div>
-                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
                           </div>

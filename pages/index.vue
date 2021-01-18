@@ -7,7 +7,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">  
           <b-nav-form>
-            <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon> Wishlist </b-button> 
+            
             <nuxt-link to="/cart"><b-button><b-icon icon="cart3" aria-hidden="true"></b-icon></b-button></nuxt-link>
             <b-form-input size="sm" class="mr-sm-2" v-model="findText" placeholder="Search"></b-form-input>
             <!-- <input type="text" class="form-control" v-model="findText" /> -->
@@ -97,7 +97,6 @@
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
                           <div>
-                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
                           <b-button v-b-toggle.sidebar-right v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
                           </div>
@@ -133,15 +132,12 @@
     <b-container fluid class="page-footer">
       <b-row>
         <b-col class="text-center"><h4>The Book Haven</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos corporis, cumque nostrum accusamus, mollitia excepturi, non incidunt iure explicabo totam temporibus perspiciatis qui? Non nostrum sequi rerum accusantium delectus optio.</p>
+        <p>Hello, we at The Book Haven offers you new and exicting e-books and pdf for just the right price. Shop and read with us day and night to feel that experience within our books. We hope you have a great experience here at The Book Haven. Thank you!</p>
         </b-col>
-        <b-col class="text-center"><h4>Payment</h4>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque ratione earum voluptate quae sint suscipit sapiente. Sapiente, porro distinctio ducimus consequuntur nulla, nihil numquam quo modi ratione, quas at?
-        </p>
+        <b-col class="text-center"><h4>#TeamKetchup</h4>
+        <p>#TeamKetchup is a 5 man team of inspiring and passionate developers. We at The Book Haven would like to thank them for helping us build this wonderful website with full of dedication and passion. THANK YOU KETCHUP!</p>
         </b-col>
-        <b-col class="text-center"><h4>Customer Service</h4>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum repellat officia ipsa incidunt nam vitae adipisci dolores hic dolorum officiis voluptatem tenetur asperiores neque, necessitatibus facilis deleniti quo odio ab.</p>
-        </b-col>
+        
       </b-row>
     </b-container>
 
@@ -215,16 +211,16 @@ export default {
 
     displaySearch: function() {
       if(this.findText == ''){
-            alert("No Result Found");
+            alert("Please Input a Keyword");
       }
       else{
-      this.build+=1;
       this.searched = [];
       let val = this.findText;
       let arr = this.items;
       let arrayTitle = [];
       let result = [];
       let temp = '';
+      let notF = false;
       let arrayTemp = [];
       console.log(`You've searched for: ${val}`);
       val = val.toLowerCase();
@@ -240,10 +236,15 @@ export default {
           result = arrayTitle[i];
           if(this.items[i].Title == result)
           {
+            notF = true;
+            this.build+=1;
             this.searched.push(this.items[i])
             this.searchBar = true;
           }
         }
+      }
+      if(!notF){
+        alert("No result Found")
       }
       
       }

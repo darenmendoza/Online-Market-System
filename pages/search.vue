@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>All E-Books</h2>
+    <h2>Search a Book!</h2>
     <b-card-group deck v-for="row in formattedClubs" :key="row.index" style="margin: 2rem">
         <b-card :title="books.Title" :img-src="books.Image" img-alt="Image" img-top v-for="books in row" :key="books.popular" style="max-width: 25%;">
                       <b-card-text>
@@ -21,7 +21,6 @@
                         <div class="px-2 py-3">
                           <b-img :src="img" fluid thumbnail></b-img>
                           <div>
-                          <b-button><b-icon icon="heart-fill" aria-hidden="true"></b-icon></b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="!paid"><b-icon icon="cart3" aria-hidden="true"></b-icon> Add to Cart</b-button>
                           <b-button v-b-toggle.sidebar-right v-on:click.prevent="addedToCart" v-if="paid" disabled><b-icon icon="check" aria-hidden="false"></b-icon> Books Already Paid</b-button>
                           </div>
